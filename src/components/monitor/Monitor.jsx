@@ -4,27 +4,38 @@ import { connect } from 'react-redux';
 import * as MonitorActions from './MonitorActions';
 
 export class Monitor extends Component {
+  constructor(props) {
+    super(props);
+    this.sendFocusRequest = this.sendFocusRequest.bind(this);
+    this.testCompleteMessage = this.testCompleteMessage.bind(this);
+  }
+
   render() {
     return (
       <div onClick={this.sendFocusRequest} >
         <h1>MONITOR</h1>
+        <input
+          ref={(input) => {this.textInput = input;}}
+          type="text"
+          onKeyPress={this.testCompleteMessage}
+        />
         {this.props.history.map(val => (<p key={val.id}>{val.call}:{val.response}</p>))}
       </div>
     );
   }
 
-  componentDidMount() {
-    this.interval = setInterval(() => {
-      this.props.addCall('Call', 'Response');
-    }, 1000);
-  }
-
-  componentWillUnmount() {
-    clearInterval(this.interval);
-  }
-
   sendFocusRequest() {
-    console.log('Send Focus Request');
+    this.textInput.focus();
+  }
+
+  testCompleteMessage(ev) {
+    if (ev.key === 'Enter') {
+      this.completeMessage(ev.target.value);
+    }
+  }
+  completeMessage(val) {
+    this.props.addCall(val, 'Response');
+    this.textInput.value = '';
   }
 }
 

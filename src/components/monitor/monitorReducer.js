@@ -1,9 +1,17 @@
+import { combineReducers } from 'redux';
+import {
+  CALL_ADD,
+  CALL_CLEAR,
+  SET_LOADING,
+  CLEAR_LOADING
+} from './MonitorActions';
+
 const historyInit = [];
 const editStateInit = { loading: false };
 
 export function history(state = historyInit, action) {
   switch (action.type) {
-    case 'CALL_ADD':
+    case CALL_ADD:
       return [
         ...state,
         {
@@ -12,21 +20,21 @@ export function history(state = historyInit, action) {
           response: action.response
         }
       ];
-    case 'CALL_CLEAR':
+    case CALL_CLEAR:
       return [];
     default:
       return state;
   }
 }
 
-export function editState(state = editStateInit, action) {
+export function loader(state = editStateInit, action) {
   switch (action.type) {
-    case 'SET_LOADING':
+    case SET_LOADING:
       return {
         ...state,
         loading: true,
       };
-    case 'CLEAR_LOADING':
+    case CLEAR_LOADING:
       return {
         ...state,
         loading: false,
@@ -35,3 +43,8 @@ export function editState(state = editStateInit, action) {
       return state;
   }
 }
+
+export default combineReducers({
+  loader,
+  history
+});

@@ -44,7 +44,10 @@ export class Monitor extends Component {
 * */
 
 function mapStateToProps(state) {
-  return { ...state };
+  return {
+    history: state.monitor.history,
+    loader: state.monitor.loader,
+  };
 }
 
 function mapDispatchToProps(dispatch) {

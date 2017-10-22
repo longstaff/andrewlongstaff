@@ -3,6 +3,8 @@ import { bindActionCreators } from 'redux';
 import { connect } from 'react-redux';
 import * as MonitorActions from './MonitorActions';
 import Prompt from '../prompt/Prompt';
+import Call from '../call/Call';
+import Response from '../response/Response';
 
 export class Monitor extends Component {
   constructor(props) {
@@ -23,25 +25,40 @@ export class Monitor extends Component {
   }
 
   render() {
+    let history = this.renderHistory(this.props.history);
+
     return (
       <div onClick={this.sendFocusRequest} >
         <h1>MONITOR</h1>
+        <ol>
+          {history}
+        </ol>
         <Prompt
           onComplete = {this.completeMessage}
           onChange = {this.updateMessage}
           value = {this.state.promptVal}
           ref={(Prompt) => {this.prompt = Prompt;}}
         />
-        {this.props.history.map(val => (<p key={val.id}>{val.call}:{val.response}</p>))}
       </div>
     );
+  }
+
+  renderHistory(history) {
+    return history.map(val => {
+      let call = val.call ? <Call value = {val.call}/> : '';
+      let response = val.response ? <Response value = {val.response}/> : <Response value = "..." />
+
+      return <li key={val.id}>
+        {call}
+        {response}
+      </li>
+    });
   }
 
   sendFocusRequest() {
     this.prompt.focus();
   }
   completeMessage(val) {
-
     if (val === "clear") {
       this.props.clearHistory();
     } else {

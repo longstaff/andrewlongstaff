@@ -2,6 +2,7 @@ import { combineReducers } from 'redux';
 import {
   CALL_ADD,
   CALL_CLEAR,
+  MESSAGE_ADD,
   SET_LOADING,
   CLEAR_LOADING
 } from './MonitorActions';
@@ -18,6 +19,14 @@ export function history(state = historyInit, action) {
           id: state + 1,
           call: action.call,
           response: action.response
+        }
+      ];
+    case MESSAGE_ADD:
+      return [
+        ...state,
+        {
+          id: state + 1,
+          response: action.message
         }
       ];
     case CALL_CLEAR:

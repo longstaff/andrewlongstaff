@@ -8,14 +8,18 @@ import AppReducer from './components/app/appReducer';
 import registerServiceWorker from './registerServiceWorker';
 import { loadConfig, saveConfig } from './utils/localStorage';
 
-const store = createStore(AppReducer, loadConfig());
+let prevState = loadConfig();
+let hadPrevState = prevState !== undefined;
+const store = createStore(AppReducer, prevState);
 store.subscribe(() => {
   saveConfig(store.getState());
 })
 
 ReactDOM.render(
     <Provider store={store}>
-      <App />
+      <App
+        restart = {hadPrevState}
+      />
     </Provider>,
     document.getElementById('root'));
 

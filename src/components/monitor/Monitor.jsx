@@ -5,6 +5,7 @@ import * as MonitorActions from './MonitorActions';
 import Prompt from '../prompt/Prompt';
 import Call from '../call/Call';
 import Response from '../response/Response';
+import './Monitor.css';
 
 export class Monitor extends Component {
   constructor(props) {
@@ -40,9 +41,8 @@ export class Monitor extends Component {
     }
 
     return (
-      <div onClick={this.sendFocusRequest} >
-        <h1>MONITOR</h1>
-        <ol>
+      <div className="Monitor" onClick={this.sendFocusRequest} >
+        <ol className="Monitor-list">
           {history}
         </ol>
         {prompt}
@@ -59,7 +59,7 @@ export class Monitor extends Component {
       let call = val.call ? <Call value = {val.call}/> : '';
       let response = val.response ? <Response value = {val.response}/> : <Response value = "..." />
 
-      return <li key={val.id}>
+      return <li key={val.id} className="Monitor-list-item">
         {call}
         {response}
       </li>

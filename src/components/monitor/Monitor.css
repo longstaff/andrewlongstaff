@@ -1,0 +1,13 @@
+.Monitor {
+  padding: 20px;
+}
+
+.Monitor-list {
+  padding: 0;
+  margin: 0;
+}
+.Monitor-list-item {
+  list-style: none;
+  padding: 2px 0;
+  margin: 0;
+}

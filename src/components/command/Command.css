@@ -1,0 +1,7 @@
+.command {
+    white-space: nowrap;
+    color: #ffcc00;
+    margin-right: 7px;
+    user-select: none;
+    float: left;
+}

@@ -1,0 +1,9 @@
+.Call {
+  display: flex;
+  flex-direction: row;
+}
+.Call-text {
+  margin: 0;
+  padding: 0;
+}
+

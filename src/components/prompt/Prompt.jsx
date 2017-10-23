@@ -1,4 +1,6 @@
 import React, { Component } from 'react';
+import Command from '../command/Command';
+import './Prompt.css'
 
 export default class Prompt extends Component {
   constructor(props) {
@@ -9,13 +11,17 @@ export default class Prompt extends Component {
 
   render() {
     return (
-      <input
-        ref = {(input) => {this.textInput = input;}}
-        type = "text"
-        onKeyPress = {this.testCompleteMessage}
-        onChange = {this.updateMessage}
-        value = {this.props.value}
-      />
+      <div className="Prompt">
+        <Command />
+        <input
+          className="Prompt-input"
+          ref = {(input) => {this.textInput = input;}}
+          type = "text"
+          onKeyPress = {this.testCompleteMessage}
+          onChange = {this.updateMessage}
+          value = {this.props.value}
+        />
+      </div>
     );
   }
 

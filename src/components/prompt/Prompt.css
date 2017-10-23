@@ -1,0 +1,15 @@
+.Prompt {
+  display: flex;
+  flex-direction: row;
+}
+
+.Prompt-input {
+  outline: none;
+  background-color: transparent;
+  margin: 0;
+  font: inherit;
+  border: none;
+  color: inherit;
+  text-shadow:inherit;
+  width: 100%;
+}

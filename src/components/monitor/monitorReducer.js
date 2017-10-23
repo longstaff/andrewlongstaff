@@ -2,6 +2,7 @@ import { combineReducers } from 'redux';
 import {
   CALL_ADD,
   CALL_CLEAR,
+  CALL_UPDATE,
   MESSAGE_ADD,
   SET_LOADING,
   CLEAR_LOADING
@@ -16,11 +17,21 @@ export function history(state = historyInit, action) {
       return [
         ...state,
         {
-          id: state + 1,
+          id: action.id,
           call: action.call,
           response: action.response
         }
       ];
+    case CALL_UPDATE:
+      return state.map((val) => {
+        let newState = val;
+        if (val.id === action.id) {
+          newState = Object.assign({}, val, {
+            response: action.response
+          });
+        }
+        return newState;
+      });
     case MESSAGE_ADD:
       return [
         ...state,

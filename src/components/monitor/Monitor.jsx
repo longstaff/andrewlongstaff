@@ -26,6 +26,18 @@ export class Monitor extends Component {
 
   render() {
     let history = this.renderHistory(this.props.history);
+    let prompt;
+    if (this.props.loader.loading === true) {
+      prompt = '';
+      this.prompt = null;
+    } else {
+      prompt = <Prompt
+        onComplete = {this.completeMessage}
+        onChange = {this.updateMessage}
+        value = {this.state.promptVal}
+        ref={(Prompt) => {this.prompt = Prompt;}}
+      />
+    }
 
     return (
       <div onClick={this.sendFocusRequest} >
@@ -33,14 +45,13 @@ export class Monitor extends Component {
         <ol>
           {history}
         </ol>
-        <Prompt
-          onComplete = {this.completeMessage}
-          onChange = {this.updateMessage}
-          value = {this.state.promptVal}
-          ref={(Prompt) => {this.prompt = Prompt;}}
-        />
+        {prompt}
       </div>
     );
+  }
+
+  componentDidUpdate(prevProps, prevState) {
+    this.sendFocusRequest();
   }
 
   renderHistory(history) {
@@ -56,13 +67,14 @@ export class Monitor extends Component {
   }
 
   sendFocusRequest() {
-    this.prompt.focus();
+    if (this.prompt !== null)
+      this.prompt.focus();
   }
   completeMessage(val) {
     if (val === "clear") {
       this.props.clearHistory();
     } else {
-      this.props.addCall(val, 'Response');
+      this.props.callResponse(val, 'Response');
     }
 
     this.setState({

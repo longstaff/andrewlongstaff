@@ -1,26 +1,32 @@
 import React from 'react';
 import ReactDOM from 'react-dom';
-import { createStore } from 'redux';
+import { createStore, applyMiddleware } from 'redux';
 import { Provider } from 'react-redux';
+import thunk from 'redux-thunk';
 import './index.css';
 import App from './components/app/App';
 import AppReducer from './components/app/appReducer';
 import registerServiceWorker from './registerServiceWorker';
 import { loadConfig, saveConfig } from './utils/localStorage';
 
-let prevState = loadConfig();
-let hadPrevState = prevState !== undefined;
-const store = createStore(AppReducer, prevState);
+const prevState = loadConfig();
+const hadPrevState = prevState !== undefined;
+const middleware = [
+  thunk
+];
+
+const store = createStore(AppReducer, prevState, applyMiddleware(...middleware));
 store.subscribe(() => {
   saveConfig(store.getState());
-})
+});
 
 ReactDOM.render(
-    <Provider store={store}>
-      <App
-        restart = {hadPrevState}
-      />
-    </Provider>,
-    document.getElementById('root'));
+  <Provider store = {store}>
+    <App
+      restart = {hadPrevState}
+    />
+  </Provider>,
+  document.getElementById('root')
+);
 
 registerServiceWorker();

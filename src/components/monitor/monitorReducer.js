@@ -8,7 +8,22 @@ import {
   CLEAR_LOADING
 } from './MonitorActions';
 
-const historyInit = [];
+function getDateString(date) {
+  return `${date.getDate()}/${date.getMonth()+1}/${date.getFullYear()}, ${date.getHours()}:${date.getMinutes()}:${date.getSeconds()}`;
+}
+
+const historyInit = [
+  {
+    id: 'intro_line_1',
+    response: [
+      'Welcome to Andrew Longstaff Terminal! (v 1.1.0)',
+      getDateString(new Date())
+    ]
+  }, {
+    id: 'intro_line_2',
+    response: 'Documentation: type \'help\' for command list'
+  }
+];
 const editStateInit = { loading: false };
 
 export function history(state = historyInit, action) {

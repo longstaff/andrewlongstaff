@@ -71,11 +71,7 @@ export class Monitor extends Component {
       this.prompt.focus();
   }
   completeMessage(val) {
-    if (val === "clear") {
-      this.props.clearHistory();
-    } else {
-      this.props.callResponse(val, 'Response');
-    }
+    this.props.sendCall(val);
 
     this.setState({
       promptVal: ''

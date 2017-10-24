@@ -1,4 +1,35 @@
 .Response {
   padding: 0;
   margin: 0;
+  white-space: pre;
 }
+
+.Response-colour-red {
+  color: #f92672;
+  text-shadow: 0 0 5px #f92672;
+}
+.Response-colour-yellow {
+  color: #e6db74;
+  text-shadow: 0 0 5px #e6db74;
+}
+.Response-colour-blue {
+  color: #66d9ef;
+  text-shadow: 0 0 5px #66d9ef;
+}
+.Response-colour-white {
+  color: #fff;
+  text-shadow: 0 0 5px #fff;
+}
+.Response-colour-green {
+  color: #a6e22e;
+  text-shadow: 0 0 5px #a6e22e;
+}
+.Response-colour-grey {
+  color: #75715e;
+  text-shadow: 0 0 5px #75715e;
+}
+.Response-colour-purple {
+  color: #ae81ff;
+  text-shadow: 0 0 5px #ae81ff;
+}
+

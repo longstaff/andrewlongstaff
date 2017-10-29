@@ -12,6 +12,15 @@ function getArgumentNotFound(call, arg) {
 function getArgumentInvalid(call, number) {
   return `${call} only supports ${number} argument${number > 1 ? 's' : ''}. please check your input and try again`;
 }
+function getCommandHint(command) {
+  return `For more info on a highlighted topic type '${command} {subject}'`;
+}
+function getLinkHint() {
+  return 'To follow a highlighted link type \'open {link}\'';
+}
+function getHintSpace() {
+  return ' ';
+}
 const commandMap = {
   notFound: getNotFound
 };
@@ -101,7 +110,9 @@ export const ARGUMENT_ABOUT_WORK = 'work';
 export const ARGUMENT_ABOUT_WORK_ALT1 = 'working';
 function getAboutWork() {
   return [
-    'My work'
+    'My work is found in ***github***',
+    getHintSpace(),
+    getLinkHint()
   ];
 }
 aboutMap[ARGUMENT_ABOUT_WORK] = getAboutWork;
@@ -116,8 +127,8 @@ function getAboutDefault() {
     'I met my wife when studying, and moved to Finland after we graduated.',
     'While in Finland I self taught myself Java, and from there Flash Actionscript. With the breaking of HTML5 I learned javascript and PHP, css and HTML (correctly this time) as well as various database languages as needed. A few years later and I am still **working** hands on, but now happily leading a team of developers, running modern web tech like react and redux as well as learning IOS and Android developement as well as C for hardware applications and Finnish. Guess which is the hardest...',
     'We moved back to England in 2017 and are looking forward to new things and new people!',
-    ' ',
-    'For more info on a highlighted topic type \'about {subject}\''
+    getHintSpace(),
+    getCommandHint(COMMAND_ABOUT)
   ];
 }
 
@@ -126,7 +137,7 @@ function getAbout(call, args, command) {
   if (args.length > 1) {
     arr = getArgumentInvalid(command, 1);
   } else if (args.length === 1) {
-    arr = (aboutMap[args[0].toLowerCase()] || aboutMap.notFound)(command, args);
+    arr = (aboutMap[args[0]] || aboutMap.notFound)(command, args);
   } else {
     arr = getAboutDefault();
   }
@@ -144,6 +155,42 @@ function clearInput() {
 
 commandMap[COMMAND_CLEAR] = clearInput;
 
+/* *********************** Open ************************** */
+export const COMMAND_OPEN = 'open';
+
+function getOpenDefault() {
+  return [
+    'Open has to be passed a link, currently supported:',
+    '***github***'
+  ];
+}
+
+function triggerLink(link) {
+  setTimeout(() => {
+    window.open(link, '_blank');
+  }, 200);
+  return `Opening url: ***${link}***`;
+}
+
+const linkMap = {
+  notFound: getArgumentNotFound,
+  github: triggerLink.bind(this, 'https://github.com/longstaff'),
+};
+
+function openLink(call, args, command) {
+  let res;
+  if (args.length > 1) {
+    res = getArgumentInvalid(command, 1);
+  } else if (args.length === 1) {
+    res = (linkMap[args[0]] || linkMap.notFound)(command, args);
+  } else {
+    res = getOpenDefault();
+  }
+  return callResponse.bind(this, call, res);
+}
+
+commandMap[COMMAND_OPEN] = openLink;
+
 /* *********************** Help ************************** */
 
 export const COMMAND_HELP = 'help';
@@ -154,6 +201,7 @@ const helpList = [
   { command: COMMAND_CLEAR, man: 'Clear the console' },
   { command: COMMAND_ABOUT, man: 'About Andrew Longstaff' },
   { command: COMMAND_PHOTOGRAPHS, man: 'Photography projects of Andrew Longstaff' },
+  { command: COMMAND_OPEN, man: 'Open a link' },
 ];
 
 function getHelp(call) {

@@ -39,10 +39,16 @@ export default class Response extends Component {
   }
 
   parseVal(line) {
-    let value = line;
-    console.log("LINE", value)
-    value = value.split(/\*{2,2}/).map((val, ind) => ind % 2 === 0 ? val : <span key={ind} className="Response-highlight">{val}</span>);
+    let value = line.value || line;
 
-    return value;
+    return Array.prototype.concat.call([], value.split(/\*{3,3}/).map((val, ind) => {
+      let retVal;
+      if (ind % 2 === 0) {
+        retVal = val.split(/\*{2,2}/).map((val, ind) => ind % 2 === 0 ? val : <span key={ind} className="Response-highlight">{val}</span>);
+      } else {
+        retVal = [<span key={ind} className="Response-link">{val}</span>]
+      }
+      return retVal;
+    }));
   }
 }

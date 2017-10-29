@@ -12,7 +12,7 @@
   color: #e6db74;
   text-shadow: 0 0 5px #e6db74;
 }
-.Response-highlight,
+.Response-link,
 .Response-colour-blue {
   color: #66d9ef;
   text-shadow: 0 0 5px #66d9ef;
@@ -21,6 +21,7 @@
   color: #fff;
   text-shadow: 0 0 5px #fff;
 }
+.Response-highlight,
 .Response-colour-green {
   color: #a6e22e;
   text-shadow: 0 0 5px #a6e22e;

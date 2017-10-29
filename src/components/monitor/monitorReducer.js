@@ -8,6 +8,8 @@ import {
   CLEAR_LOADING
 } from './MonitorActions';
 
+const uuid = require('uuid/v1');
+
 const MAX_INPUT_LENGTH = 200;
 const MAX_HISTORY_LENGTH = 20;
 
@@ -55,7 +57,7 @@ export function history(state = historyInit, action) {
       return [
         ...state,
         {
-          id: state + 1,
+          id: uuid(),
           response: action.message
         }
       ].slice(-MAX_HISTORY_LENGTH);

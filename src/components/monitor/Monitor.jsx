@@ -52,6 +52,7 @@ export class Monitor extends Component {
 
   componentDidUpdate(prevProps, prevState) {
     this.sendFocusRequest();
+    this.props.setScroll();
   }
 
   renderHistory(history) {

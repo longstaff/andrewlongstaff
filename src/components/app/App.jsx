@@ -26,6 +26,7 @@ export default class App extends Component {
           <div className="interlace"/>
           <Monitor
             restart = { this.props.restart }
+            setScroll = { this.resizeListener }
           />
         </div>
       </div>

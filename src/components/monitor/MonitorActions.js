@@ -81,12 +81,6 @@ export function callResponse(call, response) {
         dispatch(clearLoading());
       });
     }
-
-    const time = Math.floor(Math.random() * 1000);
-    setTimeout(() => {
-      dispatch(updateResponse(id, response));
-      dispatch(clearLoading());
-    }, time);
   };
 }
 

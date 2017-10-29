@@ -41,8 +41,8 @@ export const COMMAND_COLOURS_ALT1 = 'colors';
 export const COMMAND_COLOURS_ALT2 = 'colour';
 export const COMMAND_COLOURS_ALT3 = 'color';
 
-function getColours(call) {
-  return callResponse.bind(this, call, [
+function getColours(call, args) {
+  const colourArray = [
     { value: 'white', colour: 'white' },
     { value: 'grey', colour: 'grey' },
     { value: 'red', colour: 'red' },
@@ -50,7 +50,15 @@ function getColours(call) {
     { value: 'blue', colour: 'blue' },
     { value: 'green', colour: 'green' },
     { value: 'yellow', colour: 'yellow' },
-  ]);
+  ];
+  let useArray = colourArray;
+  if (args.length) {
+    useArray = colourArray.filter(colour => args.indexOf(colour.value) > -1);
+    if (useArray.length === 0) {
+      useArray = `No matching colours: ${args.join()}`;
+    }
+  }
+  return callResponse.bind(this, call, useArray);
 }
 
 commandMap[COMMAND_COLOURS] = getColours;

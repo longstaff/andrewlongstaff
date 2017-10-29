@@ -5,7 +5,7 @@ import './Prompt.css'
 export default class Prompt extends Component {
   constructor(props) {
     super(props);
-    this.testCompleteMessage = this.testCompleteMessage.bind(this);
+    this.testKey = this.testKey.bind(this);
     this.updateMessage = this.updateMessage.bind(this);
   }
 
@@ -17,7 +17,7 @@ export default class Prompt extends Component {
           className="Prompt-input"
           ref = {(input) => {this.textInput = input;}}
           type = "text"
-          onKeyPress = {this.testCompleteMessage}
+          onKeyDown = {this.testKey}
           onChange = {this.updateMessage}
           value = {this.props.value}
         />
@@ -29,10 +29,16 @@ export default class Prompt extends Component {
     this.textInput.focus();
   }
 
-  testCompleteMessage(ev) {
+  testKey(ev) {
     if (ev.key === 'Enter') {
       this.props.onComplete(ev.target.value);
       return false;
+    } else if (ev.key === 'ArrowUp') {
+      this.props.onHistoryScrollUp();
+      ev.preventDefault();
+    } else if (ev.key === 'ArrowDown') {
+      this.props.onHistoryScrollDown();
+      ev.preventDefault();
     }
   }
   updateMessage(ev) {

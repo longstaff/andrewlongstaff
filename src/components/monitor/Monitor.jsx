@@ -13,9 +13,12 @@ export class Monitor extends Component {
     this.sendFocusRequest = this.sendFocusRequest.bind(this);
     this.completeMessage = this.completeMessage.bind(this);
     this.updateMessage = this.updateMessage.bind(this);
+    this.historyScrollUp = this.historyScrollUp.bind(this);
+    this.historyScrollDown = this.historyScrollDown.bind(this);
 
     this.state = {
-      promptVal: ''
+      promptVal: '',
+      historyInd: 0,
     };
   }
 
@@ -35,6 +38,8 @@ export class Monitor extends Component {
       prompt = <Prompt
         onComplete = {this.completeMessage}
         onChange = {this.updateMessage}
+        onHistoryScrollUp = {this.historyScrollUp}
+        onHistoryScrollDown = {this.historyScrollDown}
         value = {this.state.promptVal}
         ref={(Prompt) => {this.prompt = Prompt;}}
       />
@@ -75,12 +80,28 @@ export class Monitor extends Component {
     this.props.sendCall(val);
 
     this.setState({
-      promptVal: ''
+      promptVal: '',
+      historyInd: 0
     })
   }
   updateMessage(val) {
     this.setState({
-      promptVal: val
+      promptVal: val,
+      historyInd: 0
+    })
+  }
+  historyScrollUp() {
+    var newHistory = Math.min(this.state.historyInd + 1, this.props.callList.length);
+    this.setState({
+      promptVal: newHistory === 0 ? '' : this.props.callList[newHistory - 1],
+      historyInd: newHistory
+    })
+  }
+  historyScrollDown() {
+    var newHistory = Math.max(this.state.historyInd - 1, 0);
+    this.setState({
+      promptVal: newHistory === 0 ? '' : this.props.callList[newHistory - 1],
+      historyInd: newHistory
     })
   }
 }
@@ -91,6 +112,7 @@ export class Monitor extends Component {
 
 function mapStateToProps(state) {
   return {
+    callList: state.monitor.callList,
     history: state.monitor.history,
     loader: state.monitor.loader,
   };

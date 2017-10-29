@@ -3,11 +3,15 @@
   padding: 20px;
   width: 100%;
   height: 100%;
+  padding-bottom:20px;
 }
 
 .Monitor-list {
   padding: 0;
   margin: 0;
+}
+.Monitor-list_no-prompt {
+  padding-bottom:20px;
 }
 .Monitor-list-item {
   list-style: none;

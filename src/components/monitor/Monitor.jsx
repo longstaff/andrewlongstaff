@@ -42,7 +42,7 @@ export class Monitor extends Component {
 
     return (
       <div className="Monitor" onClick={this.sendFocusRequest} >
-        <ol className="Monitor-list">
+        <ol className={ this.props.loader.loading ? 'Monitor-list Monitor-list_no-prompt' : 'Monitor-list'}>
           {history}
         </ol>
         {prompt}

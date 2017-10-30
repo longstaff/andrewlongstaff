@@ -2,9 +2,8 @@ import React, { Component } from 'react';
 import { bindActionCreators } from 'redux';
 import { connect } from 'react-redux';
 import * as MonitorActions from './MonitorActions';
+import History from '../history/History';
 import Prompt from '../prompt/Prompt';
-import Call from '../call/Call';
-import Response from '../response/Response';
 import './Monitor.css';
 
 export class Monitor extends Component {
@@ -23,13 +22,12 @@ export class Monitor extends Component {
   }
 
   componentDidMount() {
-    if (this.props.restart && this.props.history[this.props.history.length -1].response !== "Welcome Back") {
-      this.props.addMessage("Welcome Back");
+    if (this.props.restart) {
+      this.props.addWelcomeMessageIfNeeded();
     }
   }
 
   render() {
-    let history = this.renderHistory(this.props.history);
     let prompt;
     if (this.props.loader.loading === true) {
       prompt = '';
@@ -47,9 +45,10 @@ export class Monitor extends Component {
 
     return (
       <div className="Monitor" onClick={this.sendFocusRequest} >
-        <ol className={ this.props.loader.loading ? 'Monitor-list Monitor-list_no-prompt' : 'Monitor-list'}>
-          {history}
-        </ol>
+        <History
+          prompt = {!this.props.loader.loading}
+          history = {this.props.history}
+        />
         {prompt}
       </div>
     );
@@ -58,18 +57,6 @@ export class Monitor extends Component {
   componentDidUpdate(prevProps, prevState) {
     this.sendFocusRequest();
     this.props.setScroll();
-  }
-
-  renderHistory(history) {
-    return history.map(val => {
-      let call = val.call ? <Call value = {val.call}/> : '';
-      let response = val.response ? <Response value = {val.response}/> : <Response value = "..." />
-
-      return <li key={val.id} className="Monitor-list-item">
-        {call}
-        {response}
-      </li>
-    });
   }
 
   sendFocusRequest() {

@@ -96,3 +96,16 @@ export function sendCall(call) {
     dispatch(response());
   };
 }
+
+export function addWelcomeMessageIfNeeded() {
+  return (dispatch, getState) => {
+    const state = getState();
+    if (state.monitor.history && state.monitor.history.length && state.monitor.history[state.monitor.history.length - 1].response !== 'Welcome Back') {
+      ReactGA.event({
+        category: 'return',
+        text: 'welcome',
+      });
+      dispatch(addMessage('Welcome Back'));
+    }
+  };
+}

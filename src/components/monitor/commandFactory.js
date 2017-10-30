@@ -11,7 +11,7 @@ function getArgumentNotFound(call, arg, command) {
   return `${command} does not support '${arg}' please check your input and try again`;
 }
 function getArgumentInvalid(call, number, command) {
-  return `${command} only supports ${number} argument${number > 1 ? 's' : ''}. please check your input and try again`;
+  return `${command} only supports ${number} argument${number !== 1 ? 's' : ''}. please check your input and try again`;
 }
 function getCommandHint(command) {
   return `For more info on a highlighted topic type '${command} {subject}'`;
@@ -147,6 +147,26 @@ function getAbout(call, args, command) {
 
 commandMap[COMMAND_ABOUT] = getAbout;
 
+/* *********************** Contact ************************** */
+export const COMMAND_CONTACT = 'contact';
+export const COMMAND_CONTACT_ALT1 = 'email';
+
+function getEmail(call, args, command) {
+  let arr = [];
+  if (args.length) {
+    arr = getArgumentInvalid(command, 0);
+  } else {
+    arr = [
+      'Drop me a line',
+      '***web@andrewlongstaff.com***',
+    ];
+  }
+  return callResponse.bind(this, call, arr);
+}
+
+commandMap[COMMAND_CONTACT] = getEmail;
+commandMap[COMMAND_CONTACT_ALT1] = getEmail;
+
 /* *********************** Clear ************************** */
 export const COMMAND_CLEAR = 'clear';
 
@@ -183,6 +203,7 @@ function triggerLink(link) {
 const linkMap = {
   notFound: getArgumentNotFound,
   github: triggerLink.bind(this, 'https://github.com/longstaff'),
+  email: triggerLink.bind(this, 'mailto:web@andrewlongstaff.com'),
 };
 
 function openLink(call, args, command) {
@@ -202,6 +223,7 @@ commandMap[COMMAND_OPEN] = openLink;
 /* *********************** Help ************************** */
 
 export const COMMAND_HELP = 'help';
+export const COMMAND_HELP_ALT1 = 'man';
 
 const helpList = [
   { command: COMMAND_HELP, man: 'Warning: Cyclical reference detected' },
@@ -210,15 +232,16 @@ const helpList = [
   { command: COMMAND_ABOUT, man: 'About Andrew Longstaff' },
   { command: COMMAND_PHOTOGRAPHS, man: 'Photography projects of Andrew Longstaff' },
   { command: COMMAND_OPEN, man: 'Open a link' },
+  { command: COMMAND_CONTACT, man: 'Contact information' },
 ];
 
-function getHelp(call) {
-  const maxLength = helpList.reduce((prev, next) => {
+function getHelpFromArr(arr) {
+  const maxLength = arr.reduce((prev, next) => {
     const nextLength = next.command.length > prev ? next.command.length : prev;
     return nextLength;
   }, 0);
   const padding = new Array(maxLength + 1).join(' ');
-  const commands = ['Available commands:'].concat(helpList.sort((a, b) => {
+  const commands = ['Available commands:'].concat(arr.sort((a, b) => {
     if (a.command < b.command) return -1;
     if (a.command > b.command) return 1;
     return 0;
@@ -226,11 +249,22 @@ function getHelp(call) {
     const padCommand = `${val.command}${padding}`.slice(0, maxLength + 1);
     return `${padCommand} - ${val.man}`;
   }));
-
-  return callResponse.bind(this, call, commands);
+  return commands;
+}
+function getHelp(call, args, command) {
+  let res;
+  if (args.length) {
+    const filtered = helpList.filter(val => args.indexOf(val.command) > -1);
+    res = filtered.length === 0 ?
+      getArgumentNotFound(call, args.join(), command) : getHelpFromArr(filtered);
+  } else {
+    res = getHelpFromArr(helpList.filter(val => val.command !== COMMAND_HELP));
+  }
+  return callResponse.bind(this, call, res);
 }
 
 commandMap[COMMAND_HELP] = getHelp;
+commandMap[COMMAND_HELP_ALT1] = getHelp;
 
 /* *********************************************************************** */
 /* **************************** Run Mapper ******************************* */

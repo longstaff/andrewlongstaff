@@ -9,7 +9,16 @@ import AppReducer from './components/app/appReducer';
 import registerServiceWorker from './registerServiceWorker';
 import { loadConfig, saveConfig } from './utils/localStorage';
 
+import ReactGA from 'react-ga';
+ReactGA.initialize('UA-17825439-1');
+ReactGA.pageview(window.location.hash);
+
 const prevState = loadConfig();
+// To fix crash while loading bugs
+if (prevState && prevState.monitor) {
+  prevState.monitor.loader = false;
+}
+
 const hadPrevState = prevState !== undefined;
 const middleware = [
   thunk

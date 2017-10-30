@@ -1,3 +1,4 @@
+import ReactGA from 'react-ga';
 import {
   callResponse,
   clearHistory,
@@ -6,11 +7,11 @@ import {
 function getNotFound(call) {
   return callResponse.bind(this, call, `${call}: command not found, please type 'help' for command list`);
 }
-function getArgumentNotFound(call, arg) {
-  return `${call} does not support '${arg}' please check your input and try again`;
+function getArgumentNotFound(call, arg, command) {
+  return `${command} does not support '${arg}' please check your input and try again`;
 }
-function getArgumentInvalid(call, number) {
-  return `${call} only supports ${number} argument${number > 1 ? 's' : ''}. please check your input and try again`;
+function getArgumentInvalid(call, number, command) {
+  return `${command} only supports ${number} argument${number > 1 ? 's' : ''}. please check your input and try again`;
 }
 function getCommandHint(command) {
   return `For more info on a highlighted topic type '${command} {subject}'`;
@@ -137,7 +138,7 @@ function getAbout(call, args, command) {
   if (args.length > 1) {
     arr = getArgumentInvalid(command, 1);
   } else if (args.length === 1) {
-    arr = (aboutMap[args[0]] || aboutMap.notFound)(command, args);
+    arr = (aboutMap[args[0]] || aboutMap.notFound)(call, args, command);
   } else {
     arr = getAboutDefault();
   }
@@ -167,9 +168,16 @@ function getOpenDefault() {
 
 function triggerLink(link) {
   setTimeout(() => {
+    ReactGA.event({
+      category: 'open',
+      text: link,
+    });
     window.open(link, '_blank');
   }, 200);
-  return `Opening url: ***${link}***`;
+  return [
+    `Opening url: ***${link}***`,
+    'If window did not open check popup blockers and try again.',
+  ];
 }
 
 const linkMap = {
@@ -182,7 +190,7 @@ function openLink(call, args, command) {
   if (args.length > 1) {
     res = getArgumentInvalid(command, 1);
   } else if (args.length === 1) {
-    res = (linkMap[args[0]] || linkMap.notFound)(command, args);
+    res = (linkMap[args[0]] || linkMap.notFound)(call, args, command);
   } else {
     res = getOpenDefault();
   }

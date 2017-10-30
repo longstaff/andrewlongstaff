@@ -23,7 +23,7 @@ export class Monitor extends Component {
   }
 
   componentDidMount() {
-    if (this.props.restart) {
+    if (this.props.restart && this.props.history[this.props.history.length -1].response !== "Welcome Back") {
       this.props.addMessage("Welcome Back");
     }
   }

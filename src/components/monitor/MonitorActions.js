@@ -1,3 +1,4 @@
+import ReactGA from 'react-ga';
 import commandFactory from './commandFactory';
 
 export const CALL_UPDATE = 'com.andrewlongstaff.monitor.call.update';
@@ -87,6 +88,10 @@ export function callResponse(call, response) {
 // Thunk for async results
 export function sendCall(call) {
   return (dispatch) => {
+    ReactGA.event({
+      category: 'command',
+      text: call,
+    });
     const response = commandFactory(call);
     dispatch(response());
   };

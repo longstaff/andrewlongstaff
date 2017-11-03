@@ -11,7 +11,7 @@ import { loadConfig, saveConfig } from './utils/localStorage';
 
 import ReactGA from 'react-ga';
 ReactGA.initialize('UA-17825439-1');
-ReactGA.pageview(window.location.hash);
+ReactGA.pageview('/');
 
 const prevState = loadConfig();
 // To fix crash while loading bugs

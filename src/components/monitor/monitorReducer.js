@@ -11,7 +11,7 @@ import {
 const uuid = require('uuid/v1');
 
 const MAX_INPUT_LENGTH = 200;
-const MAX_HISTORY_LENGTH = 20;
+const MAX_HISTORY_LENGTH = 50;
 
 function getDateString(date) {
   return `${date.getDate()}/${date.getMonth() + 1}/${date.getFullYear()}, ${date.getHours()}:${date.getMinutes()}:${date.getSeconds()}`;

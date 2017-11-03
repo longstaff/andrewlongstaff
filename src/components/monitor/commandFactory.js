@@ -27,6 +27,213 @@ const commandMap = {
 };
 
 /* *********************************************************************** */
+/* ******************************* Jokes ********************************* */
+/* *********************************************************************** */
+
+/* *********************** Photography ************************** */
+
+export const COMMAND_CD = 'cd';
+function getCdJoke(call) {
+  return callResponse.bind(this, call, 'No-one uses cd\'s any more.');
+}
+commandMap[COMMAND_CD] = getCdJoke;
+
+export const COMMAND_SUDO = 'sudo';
+export const COMMAND_SU = 'su';
+function getSudoJoke(call) {
+  return callResponse.bind(this, call, 'I am root!');
+}
+commandMap[COMMAND_SUDO] = getSudoJoke;
+commandMap[COMMAND_SU] = getSudoJoke;
+
+export const COMMAND_WHOAMI = 'whoami';
+function getWhoAmIJoke(call) {
+  return callResponse.bind(this, call, 'now is not the time for an existencial crisis.');
+}
+commandMap[COMMAND_WHOAMI] = getWhoAmIJoke;
+
+export const COMMAND_WHATIS = 'whatis';
+function getWhatIsJoke(call, args) {
+  let resp = 'whatever you want it to be';
+  if (args[0] === 'love') resp = 'baby dont hurt me, dont hurt me, no more.';
+  return callResponse.bind(this, call, resp);
+}
+commandMap[COMMAND_WHATIS] = getWhatIsJoke;
+
+export const COMMAND_RM = 'rm';
+export const COMMAND_RMDIR = 'rmdir';
+function getRmJoke(call) {
+  return callResponse.bind(this, call, 'Cant touch this');
+}
+commandMap[COMMAND_RM] = getRmJoke;
+commandMap[COMMAND_RMDIR] = getRmJoke;
+
+export const COMMAND_CAT = 'cat';
+function getCatJoke(call) {
+  return callResponse.bind(this, call, 'Meow?');
+}
+commandMap[COMMAND_CAT] = getCatJoke;
+
+export const COMMAND_NETCAT = 'netcat';
+function getNetCatJoke(call) {
+  return callResponse.bind(this, call, '|\\/|30\\/\\/?');
+}
+commandMap[COMMAND_NETCAT] = getNetCatJoke;
+
+export const COMMAND_PING = 'ping';
+function getPingJoke(call) {
+  return callResponse.bind(this, call, 'Pong!');
+}
+commandMap[COMMAND_PING] = getPingJoke;
+
+export const COMMAND_TRACEROUTE = 'traceroute';
+function getTraceRouteJoke(call) {
+  return callResponse.bind(this, call, 'I cant find my pencil...');
+}
+commandMap[COMMAND_TRACEROUTE] = getTraceRouteJoke;
+
+export const COMMAND_MV = 'mv';
+function getMvJoke(call) {
+  return callResponse.bind(this, call, 'I like to mv it mv it!');
+}
+commandMap[COMMAND_MV] = getMvJoke;
+
+export const COMMAND_CP = 'cp';
+function getCpJoke(call) {
+  return callResponse.bind(this, call, 'Damnit Jim, I\'m a server not a photocopier!');
+}
+commandMap[COMMAND_CP] = getCpJoke;
+
+export const COMMAND_KILL = 'kill';
+function getKillJoke(call) {
+  return callResponse.bind(this, call, 'Im a pacifist');
+}
+commandMap[COMMAND_KILL] = getKillJoke;
+
+export const COMMAND_FIND = 'find';
+function getFindJoke(call) {
+  return callResponse.bind(this, call, 'Follow the sun for three days then follow the river upstream, you cant miss it');
+}
+commandMap[COMMAND_FIND] = getFindJoke;
+
+export const COMMAND_NOHUP = 'nohup';
+function getNoHupJoke(call) {
+  return callResponse.bind(this, call, 'No, you hang up...');
+}
+commandMap[COMMAND_NOHUP] = getNoHupJoke;
+
+export const COMMAND_MOUNT = 'mount';
+function getMountJoke(call) {
+  return callResponse.bind(this, call, 'Shouldn\'t you at least buy me dinner first?');
+}
+commandMap[COMMAND_MOUNT] = getMountJoke;
+
+export const COMMAND_BASH = 'bash';
+function getBashJoke(call) {
+  return callResponse.bind(this, call, 'Ow, stop that!');
+}
+commandMap[COMMAND_BASH] = getBashJoke;
+
+export const COMMAND_FSCK = 'fsck';
+function getFsckJoke(call) {
+  return callResponse.bind(this, call, 'Fsck you too!');
+}
+commandMap[COMMAND_FSCK] = getFsckJoke;
+
+export const COMMAND_TEE = 'tee';
+function getTeeJoke(call) {
+  return callResponse.bind(this, call, 'Black, no sugar please');
+}
+commandMap[COMMAND_TEE] = getTeeJoke;
+
+export const COMMAND_PWD = 'pwd';
+export const COMMAND_PASSWD = 'passwd';
+function getPwdJoke(call) {
+  return callResponse.bind(this, call, 'Knock three times, wait a second then knock twice more');
+}
+commandMap[COMMAND_PWD] = getPwdJoke;
+commandMap[COMMAND_PASSWD] = getPwdJoke;
+
+export const COMMAND_TTY = 'tty';
+function getTtyJoke(call) {
+  return callResponse.bind(this, call, 'I love ttys too');
+}
+commandMap[COMMAND_TTY] = getTtyJoke;
+
+export const COMMAND_INIT = 'init';
+function getInitJoke(call) {
+  return callResponse.bind(this, call, 'Bring me back');
+}
+commandMap[COMMAND_INIT] = getInitJoke;
+
+export const COMMAND_ECHO = 'echo';
+function getEchoJoke(call) {
+  return callResponse.bind(this, call, 'ECHO, Echo, echo...');
+}
+commandMap[COMMAND_ECHO] = getEchoJoke;
+
+export const COMMAND_TAIL = 'tail';
+function getTailJoke(call) {
+  return callResponse.bind(this, call, 'Follow that car!');
+}
+commandMap[COMMAND_TAIL] = getTailJoke;
+
+export const COMMAND_ENV = 'env';
+function getEnvJoke(call) {
+  return callResponse.bind(this, call, 'Save the env, use the recycle bin!');
+}
+commandMap[COMMAND_ENV] = getEnvJoke;
+
+export const COMMAND_MKDIR = 'mkdir';
+export const COMMAND_VI = 'vi';
+export const COMMAND_VIM = 'vim';
+export const COMMAND_PICO = 'pico';
+export const COMMAND_DD = 'dd';
+export const COMMAND_DF = 'df';
+export const COMMAND_CRON = 'cron';
+export const COMMAND_NSLOOKUP = 'nslookup';
+export const COMMAND_LS = 'ls';
+export const COMMAND_CHMOD = 'chmod';
+export const COMMAND_CHROOT = 'chroot';
+export const COMMAND_GREP = 'grep';
+export const COMMAND_GZIP = 'gzip';
+export const COMMAND_WGET = 'wget';
+export const COMMAND_NETSTAT = 'netstat';
+export const COMMAND_CHOWN = 'chown';
+export const COMMAND_IFCONFIG = 'ifconfig';
+export const COMMAND_FDISK = 'fdisk';
+function getJokeNo(call) {
+  const options = [
+    'No',
+    'Negative',
+    'Why would you want to do that?',
+    'I dont think so',
+    'Unsure, try again later',
+    'I cant do it captain, I dont have the power!',
+    'Who do you think you are?',
+  ];
+  return callResponse.bind(this, call, options[Math.floor(Math.random() * options.length)]);
+}
+commandMap[COMMAND_MKDIR] = getJokeNo;
+commandMap[COMMAND_VI] = getJokeNo;
+commandMap[COMMAND_VIM] = getJokeNo;
+commandMap[COMMAND_PICO] = getJokeNo;
+commandMap[COMMAND_DD] = getJokeNo;
+commandMap[COMMAND_DF] = getJokeNo;
+commandMap[COMMAND_CRON] = getJokeNo;
+commandMap[COMMAND_NSLOOKUP] = getJokeNo;
+commandMap[COMMAND_LS] = getJokeNo;
+commandMap[COMMAND_CHMOD] = getJokeNo;
+commandMap[COMMAND_CHROOT] = getJokeNo;
+commandMap[COMMAND_GREP] = getJokeNo;
+commandMap[COMMAND_GZIP] = getJokeNo;
+commandMap[COMMAND_WGET] = getJokeNo;
+commandMap[COMMAND_NETSTAT] = getJokeNo;
+commandMap[COMMAND_CHOWN] = getJokeNo;
+commandMap[COMMAND_IFCONFIG] = getJokeNo;
+commandMap[COMMAND_FDISK] = getJokeNo;
+
+/* *********************************************************************** */
 /* *********************** Gallery interactions ************************** */
 /* *********************************************************************** */
 
@@ -190,7 +397,7 @@ function triggerLink(link) {
   setTimeout(() => {
     ReactGA.event({
       category: 'open',
-      text: link,
+      action: link,
     });
     window.open(link, '_blank');
   }, 200);
@@ -241,14 +448,14 @@ function getHelpFromArr(arr) {
     return nextLength;
   }, 0);
   const padding = new Array(maxLength + 1).join(' ');
-  const commands = ['Available commands:'].concat(arr.sort((a, b) => {
+  const commands = arr.sort((a, b) => {
     if (a.command < b.command) return -1;
     if (a.command > b.command) return 1;
     return 0;
   }).map((val) => {
     const padCommand = `${val.command}${padding}`.slice(0, maxLength + 1);
     return `${padCommand} - ${val.man}`;
-  }));
+  });
   return commands;
 }
 function getHelp(call, args, command) {
@@ -258,7 +465,7 @@ function getHelp(call, args, command) {
     res = filtered.length === 0 ?
       getArgumentNotFound(call, args.join(), command) : getHelpFromArr(filtered);
   } else {
-    res = getHelpFromArr(helpList.filter(val => val.command !== COMMAND_HELP));
+    res = ['Available commands:'].concat(getHelpFromArr(helpList.filter(val => val.command !== COMMAND_HELP)));
   }
   return callResponse.bind(this, call, res);
 }

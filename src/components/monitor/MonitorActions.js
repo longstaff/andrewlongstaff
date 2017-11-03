@@ -90,7 +90,7 @@ export function sendCall(call) {
   return (dispatch) => {
     ReactGA.event({
       category: 'command',
-      text: call,
+      action: call,
     });
     const response = commandFactory(call);
     dispatch(response());
@@ -103,7 +103,7 @@ export function addWelcomeMessageIfNeeded() {
     if (state.monitor.history && state.monitor.history.length && state.monitor.history[state.monitor.history.length - 1].response !== 'Welcome Back') {
       ReactGA.event({
         category: 'return',
-        text: 'welcome',
+        action: 'welcome',
       });
       dispatch(addMessage('Welcome Back'));
     }

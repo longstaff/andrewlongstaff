@@ -1,5 +1,6 @@
 import ReactGA from 'react-ga';
 import commandFactory from './commandFactory';
+import { setAppFlicker } from '../app/AppActions';
 
 export const CALL_UPDATE = 'com.andrewlongstaff.monitor.call.update';
 export const CALL_ADD = 'com.andrewlongstaff.monitor.call.add';
@@ -94,6 +95,13 @@ export function sendCall(call) {
     });
     const response = commandFactory(call);
     dispatch(response());
+  };
+}
+
+export function setFlicker(flicker, call, response) {
+  return (dispatch) => {
+    dispatch(setAppFlicker(flicker));
+    dispatch(callResponse(call, response));
   };
 }
 

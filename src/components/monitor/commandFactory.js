@@ -2,7 +2,12 @@ import ReactGA from 'react-ga';
 import {
   callResponse,
   clearHistory,
+  setFlicker,
 } from './MonitorActions';
+import photoA from '../../img/a.jpg';
+import photoB from '../../img/b.jpg';
+import photoC from '../../img/c.jpg';
+import photoD from '../../img/d.jpg';
 
 function getNotFound(call) {
   return callResponse.bind(this, call, `${call}: command not found, please type 'help' for command list`);
@@ -30,7 +35,7 @@ const commandMap = {
 /* ******************************* Jokes ********************************* */
 /* *********************************************************************** */
 
-/* *********************** Photography ************************** */
+/* *********************** Jokes ************************** */
 
 export const COMMAND_CD = 'cd';
 function getCdJoke(call) {
@@ -244,8 +249,67 @@ export const COMMAND_PHOTOGRAPHS_ALT1 = 'photograph';
 export const COMMAND_PHOTOGRAPHS_ALT2 = 'photography';
 export const COMMAND_PHOTOGRAPHS_ALT3 = 'photos';
 
-function getPhotographs(call) {
-  return callResponse.bind(this, call, 'Photographs go in here!');
+const photosMap = {
+  notFound: getArgumentNotFound
+};
+export const ARGUMENT_PHOTOGRAPHS_SCAPE = 'scape';
+function getPhotosScape() {
+  return [
+    'Scape was a series of 12 images made with a custom made camera. Images were shot on a full roll of medium format film and then contact printed',
+    'Final presentation size is approx. 1m x 60mm',
+    getHintSpace(),
+    'For more information ***email*** me',
+  ];
+}
+photosMap[ARGUMENT_PHOTOGRAPHS_SCAPE] = getPhotosScape;
+
+export const ARGUMENT_PHOTOGRAPHS_EXTERNAL = 'external';
+function getPhotosExternal() {
+  return [
+    'Some of my pictures can be found on external sites, find things here:',
+    '***500px***',
+    '***instagram***',
+    getHintSpace(),
+    getLinkHint(),
+  ];
+}
+photosMap[ARGUMENT_PHOTOGRAPHS_EXTERNAL] = getPhotosExternal;
+
+function getPhotographsDefault(call, args, command) {
+  return [
+    '**Scape**:',
+    ' ',
+    '-- Scape 1 --',
+    `[${photoA}]`,
+    ' ',
+    '-- Scape 2 --',
+    `[${photoB}]`,
+    ' ',
+    '-- Scape 3 --',
+    `[${photoC}]`,
+    ' ',
+    '-- Scape 4 --',
+    `[${photoD}]`,
+    ' ',
+    '**External**',
+    '***500px***',
+    '***instagram***',
+    getHintSpace(),
+    getCommandHint(command),
+    getLinkHint(),
+  ];
+}
+
+function getPhotographs(call, args, command) {
+  let arr = [];
+  if (args.length > 1) {
+    arr = getArgumentInvalid(command, 1);
+  } else if (args.length === 1) {
+    arr = (photosMap[args[0]] || photosMap.notFound)(call, args, command);
+  } else {
+    arr = getPhotographsDefault(call, args, command);
+  }
+  return callResponse.bind(this, call, arr);
 }
 
 commandMap[COMMAND_PHOTOGRAPHS] = getPhotographs;
@@ -306,7 +370,11 @@ export const ARGUMENT_ABOUT_PHOTOGRAPHS_ALT2 = 'photography';
 export const ARGUMENT_ABOUT_PHOTOGRAPHS_ALT3 = 'photos';
 function getAboutPhotos() {
   return [
-    'My photography'
+    'My photography work is centered in two main branches, experimental and structural.',
+    'After my work in uni I have a great interest in the mechanics of photography, making cameras and playing with the creation of images, more can be seen in the \'photography\' section.',
+    'My general shooting is done on square formats, either in ***instagram*** or 6x6 medium format which can be seen in ***500px***. I shoot for details, textures, compositions and juxtapositions.',
+    getHintSpace(),
+    getLinkHint(),
   ];
 }
 aboutMap[ARGUMENT_ABOUT_PHOTOGRAPHS] = getAboutPhotos;
@@ -318,9 +386,10 @@ export const ARGUMENT_ABOUT_WORK = 'work';
 export const ARGUMENT_ABOUT_WORK_ALT1 = 'working';
 function getAboutWork() {
   return [
-    'My work is found in ***github***',
+    'My work is generally under NDA, but that stuff that I can share is generally found in ***github***, including the ***source*** of this page',
+    'My profile can be found on ***linkedin***',
     getHintSpace(),
-    getLinkHint()
+    getLinkHint(),
   ];
 }
 aboutMap[ARGUMENT_ABOUT_WORK] = getAboutWork;
@@ -364,8 +433,10 @@ function getEmail(call, args, command) {
     arr = getArgumentInvalid(command, 0);
   } else {
     arr = [
-      'Drop me a line',
+      'Drop me a line by ***email*** at',
       '***web@andrewlongstaff.com***',
+      getHintSpace(),
+      getLinkHint(),
     ];
   }
   return callResponse.bind(this, call, arr);
@@ -383,13 +454,67 @@ function clearInput() {
 
 commandMap[COMMAND_CLEAR] = clearInput;
 
+/* *********************** Flicker ************************** */
+export const COMMAND_FLICKER = 'flicker';
+export const COMMAND_FLICKER_ALT1 = 'f';
+
+function switchFlickerOn(call) {
+  return setFlicker(true, call, 'Flicker enabled');
+}
+function switchFlickerOff(call) {
+  return setFlicker(false, call, 'Flicker disabled');
+}
+
+const flickerMap = {
+  notFound: getArgumentNotFound,
+  on: switchFlickerOn,
+  yes: switchFlickerOn,
+  y: switchFlickerOn,
+  off: switchFlickerOff,
+  no: switchFlickerOff,
+  n: switchFlickerOff,
+};
+
+function getFlickerDefault() {
+  return [
+    'Set flicker with argument:',
+    '**on**',
+    '**off**'
+  ];
+}
+
+function getFlicker(call, args, command) {
+  let func;
+  if (args.length > 1) {
+    func = callResponse.bind(this, call, getArgumentInvalid(command, 1));
+  } else if (args.length === 1) {
+    func = (flickerMap[args[0]] || flickerMap.notFound)(call, args, command);
+  } else {
+    func = callResponse.bind(this, call, getFlickerDefault());
+  }
+  return func;
+}
+
+commandMap[COMMAND_FLICKER] = getFlicker;
+commandMap[COMMAND_FLICKER_ALT1] = getFlicker;
+
 /* *********************** Open ************************** */
 export const COMMAND_OPEN = 'open';
 
 function getOpenDefault() {
   return [
     'Open has to be passed a link, currently supported:',
-    '***github***'
+    'Professional',
+    '***github***',
+    '***source***',
+    '***linkedin***',
+    'Contact',
+    '***email***',
+    'Photographs',
+    '***500px***',
+    '***instagram***',
+    getHintSpace(),
+    getLinkHint(),
   ];
 }
 
@@ -407,11 +532,17 @@ function triggerLink(link) {
   ];
 }
 
+const mailTo = 'mailto:web@andrewlongstaff.com';
 const linkMap = {
   notFound: getArgumentNotFound,
   github: triggerLink.bind(this, 'https://github.com/longstaff'),
-  email: triggerLink.bind(this, 'mailto:web@andrewlongstaff.com'),
+  source: triggerLink.bind(this, 'https://github.com/longstaff/andrewlongstaff'),
+  email: triggerLink.bind(this, mailTo),
+  linkedin: triggerLink.bind(this, 'https://www.linkedin.com/in/alongstaff/'),
+  instagram: triggerLink.bind(this, 'https://www.instagram.com/andrew.longstaff/'),
 };
+linkMap['web@andrewlongstaff.com'] = triggerLink.bind(this, mailTo);
+linkMap['500px'] = triggerLink.bind(this, 'https://500px.com/longstaff');
 
 function openLink(call, args, command) {
   let res;

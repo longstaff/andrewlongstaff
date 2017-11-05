@@ -40,15 +40,58 @@ export default class Response extends Component {
 
   parseVal(line) {
     let value = line.value || line;
+    let noop = this.parseThroughVal;
+    let highlights = this.getHighlightsVals.bind(this, noop);
+    let links = this.getLinksVals.bind(this, highlights);
+    let images = this.getImgsVals.bind(this, links);
 
-    return Array.prototype.concat.call([], value.split(/\*{3,3}/).map((val, ind) => {
-      let retVal;
-      if (ind % 2 === 0) {
-        retVal = val.split(/\*{2,2}/).map((val, ind) => ind % 2 === 0 ? val : <span key={ind} className="Response-highlight">{val}</span>);
-      } else {
-        retVal = [<span key={ind} className="Response-link">{val}</span>]
-      }
-      return retVal;
-    }));
+    return images(value);
+  }
+  parseThroughVal(val) {
+    return val;
+  }
+  parseInd(base = this.parseThroughVal, active = this.parseThroughVal, val, ind) {
+    return ind % 2 === 0 ? base(val, ind) : active(val, ind);
+  }
+  makeValArr(valFunc, val, ind) {
+    let ret = valFunc(val, ind);
+    if (!Array.isArray(ret)) ret = [ret];
+    return ret;
+  }
+
+  getHighlightsVals(nextCall = this.parseThroughVal, value) {
+    return Array.prototype.concat.call([], this.getHighlights(value).map(
+      this.makeValArr.bind(this, this.parseInd.bind(this, nextCall, this.addHighlights))
+    ));
+  }
+  getHighlights(val) {
+    return val.split(/\*{2,2}/);
+  }
+  addHighlights(val, key) {
+    return <span key={key} className="Response-highlight">{val}</span>
+  }
+
+  getLinksVals(nextCall = this.parseThroughVal, value) {
+    return Array.prototype.concat.call([], this.getLinks(value).map(
+      this.makeValArr.bind(this, this.parseInd.bind(this, nextCall, this.addLink))
+    ));
+  }
+  getLinks(val) {
+    return val.split(/\*{3,3}/);
+  }
+  addLink(val, key) {
+    return <span key={key} className="Response-link">{val}</span>
+  }
+
+  getImgsVals(nextCall = this.parseThroughVal, value) {
+    return Array.prototype.concat.call([], this.getImgs(value).map(
+      this.makeValArr.bind(this, this.parseInd.bind(this, nextCall, this.addImg))
+    ));
+  }
+  getImgs(val) {
+    return val.split(/[[\]]/);
+  }
+  addImg(val, key) {
+    return <img key={key} className="Response-img" src={val} alt=""/>
   }
 }

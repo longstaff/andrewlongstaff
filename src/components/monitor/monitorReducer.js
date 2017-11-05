@@ -5,7 +5,7 @@ import {
   CALL_UPDATE,
   MESSAGE_ADD,
   SET_LOADING,
-  CLEAR_LOADING
+  CLEAR_LOADING,
 } from './MonitorActions';
 
 const uuid = require('uuid/v1');
@@ -99,5 +99,5 @@ export function loader(state = editStateInit, action) {
 export default combineReducers({
   loader,
   history,
-  callList
+  callList,
 });

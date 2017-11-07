@@ -189,6 +189,12 @@ function getEnvJoke(call) {
 }
 commandMap[COMMAND_ENV] = getEnvJoke;
 
+export const COMMAND_GIT = 'git';
+function getGitJoke(call) {
+  return callResponse.bind(this, call, 'Who are you calling a git?');
+}
+commandMap[COMMAND_GIT] = getGitJoke;
+
 export const COMMAND_MKDIR = 'mkdir';
 export const COMMAND_VI = 'vi';
 export const COMMAND_VIM = 'vim';
@@ -459,10 +465,10 @@ export const COMMAND_FLICKER = 'flicker';
 export const COMMAND_FLICKER_ALT1 = 'f';
 
 function switchFlickerOn(call) {
-  return setFlicker(true, call, 'Flicker enabled');
+  return setFlicker.bind(this, true, call, 'Flicker enabled');
 }
 function switchFlickerOff(call) {
-  return setFlicker(false, call, 'Flicker disabled');
+  return setFlicker.bind(this, false, call, 'Flicker disabled');
 }
 
 const flickerMap = {
@@ -571,6 +577,7 @@ const helpList = [
   { command: COMMAND_PHOTOGRAPHS, man: 'Photography projects of Andrew Longstaff' },
   { command: COMMAND_OPEN, man: 'Open a link' },
   { command: COMMAND_CONTACT, man: 'Contact information' },
+  { command: COMMAND_FLICKER, man: 'Adjust animations on website' },
 ];
 
 function getHelpFromArr(arr) {

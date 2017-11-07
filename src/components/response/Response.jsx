@@ -85,13 +85,19 @@ export default class Response extends Component {
 
   getImgsVals(nextCall = this.parseThroughVal, value) {
     return Array.prototype.concat.call([], this.getImgs(value).map(
-      this.makeValArr.bind(this, this.parseInd.bind(this, nextCall, this.addImg))
+      this.makeValArr.bind(this, this.parseInd.bind(this, nextCall, this.addImg.bind(this)))
     ));
   }
   getImgs(val) {
     return val.split(/[[\]]/);
   }
   addImg(val, key) {
-    return <img key={key} className="Response-img" src={val} alt=""/>
+    return <img
+      key={key}
+      className="Response-img"
+      src={val}
+      alt=""
+      onLoad={this.props.resizeHandler}
+    />
   }
 }

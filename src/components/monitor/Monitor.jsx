@@ -48,6 +48,7 @@ export class Monitor extends Component {
         <History
           prompt = {!this.props.loader.loading}
           history = {this.props.history}
+          resizeHandler = {this.props.setScroll}
         />
         {prompt}
       </div>

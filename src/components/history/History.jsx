@@ -10,7 +10,10 @@ export default class History extends Component {
         {
           this.props.history.map(val => {
             let call = val.call ? <Call value = {val.call}/> : '';
-            let response = val.response ? <Response value = {val.response}/> : <Response value = "..." />
+            let response = val.response ? <Response
+              value = {val.response}
+              resizeHandler = {this.props.resizeHandler}
+            /> : <Response value = "..." />
 
             return <li key={val.id} className="History-item">
               {call}

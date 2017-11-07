@@ -13,7 +13,8 @@
 .flicker {
   width: 100%;
   height:100%;
-
+}
+.flicker-animate {
   animation-name: flicker;
   animation-duration: 1s;
   animation-iteration-count: infinite;

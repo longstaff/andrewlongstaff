@@ -1,8 +1,9 @@
 import React, { Component } from 'react';
+import { connect } from 'react-redux';
 import './App.css';
 import Monitor from '../monitor/Monitor';
 
-export default class App extends Component {
+export class App extends Component {
 
   constructor(props) {
     super(props);
@@ -22,7 +23,7 @@ export default class App extends Component {
         className="App"
         ref={(div) => this.scroller = div}
       >
-        <div className="flicker">
+        <div className={ this.props.flicker ? "flicker flicker-animate" : "flicker" }>
           <div className="interlace"/>
           <Monitor
             restart = { this.props.restart }
@@ -38,6 +39,23 @@ export default class App extends Component {
   }
 
   resizeListener() {
-    this.scroller.scrollTop = this.scroller.scrollHeight
+    if (this.scroller)
+      this.scroller.scrollTop = this.scroller.scrollHeight
   }
 };
+
+/**
+ * Redux container
+* */
+
+function mapStateToProps(state) {
+  return {
+    flicker: state.flicker
+  };
+}
+
+function mapDispatchToProps(dispatch) {
+  return {};
+}
+
+export default connect(mapStateToProps, mapDispatchToProps)(App);

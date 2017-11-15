@@ -4,13 +4,18 @@ import {
   clearHistory,
   setFlicker,
 } from './MonitorActions';
+import {
+  OK,
+  WARN,
+  ERROR,
+} from '../console/Console';
 import photoA from '../../img/a.jpg';
 import photoB from '../../img/b.jpg';
 import photoC from '../../img/c.jpg';
 import photoD from '../../img/d.jpg';
 
 function getNotFound(call) {
-  return callResponse.bind(this, call, `${call}: command not found, please type 'help' for command list`);
+  return callResponse.bind(this, call, `${call}: command not found, please type 'help' for command list`, WARN, 'Command not found');
 }
 function getArgumentNotFound(call, arg, command) {
   return `${command} does not support '${arg}' please check your input and try again`;
@@ -32,6 +37,38 @@ const commandMap = {
 };
 
 /* *********************************************************************** */
+/* ******************************** Game ********************************* */
+/* *********************************************************************** */
+
+/* *********************** Login ************************** */
+export const COMMAND_SUDO = 'sudo';
+export const COMMAND_SU = 'su';
+export const COMMAND_LOGIN = 'login';
+function getLogin(call, args) {
+  let arr = 'Incorrect login, please try again';
+  let level = ERROR;
+  let message = 'Incorrect credentials, please try again';
+
+  if (!args || !args.length) {
+    arr = 'Missing parameters: username, password';
+  } else if (args.length !== 3 || args[1] !== '-p') {
+    arr = 'Missing parameter: password';
+  } else if (args.join('') === 'andrew-pkatri') {
+    arr = 'Welcome back Andrew, the strongest Avenger';
+    level = OK;
+    message = 'Login complete, to access code environment type start';
+  } else if (args.join('') === 'katri-pandrew') {
+    arr = 'User temporarily disabled, please contact your administrator: andrew.';
+    level = WARN;
+    message = 'User disabled for weak password, please contact admin to reset to something stronger.';
+  }
+  return callResponse.bind(this, call, arr, level, message);
+}
+commandMap[COMMAND_SUDO] = getLogin;
+commandMap[COMMAND_SU] = getLogin;
+commandMap[COMMAND_LOGIN] = getLogin;
+
+/* *********************************************************************** */
 /* ******************************* Jokes ********************************* */
 /* *********************************************************************** */
 
@@ -42,14 +79,6 @@ function getCdJoke(call) {
   return callResponse.bind(this, call, 'No-one uses cd\'s any more.');
 }
 commandMap[COMMAND_CD] = getCdJoke;
-
-export const COMMAND_SUDO = 'sudo';
-export const COMMAND_SU = 'su';
-function getSudoJoke(call) {
-  return callResponse.bind(this, call, 'I am root!');
-}
-commandMap[COMMAND_SUDO] = getSudoJoke;
-commandMap[COMMAND_SU] = getSudoJoke;
 
 export const COMMAND_WHOAMI = 'whoami';
 function getWhoAmIJoke(call) {
@@ -403,11 +432,12 @@ aboutMap[ARGUMENT_ABOUT_WORK_ALT1] = getAboutWork;
 
 function getAboutDefault() {
   return [
+    'Hi, I\'m --Andrew--,',
     'I was born and raised in a small village outside of Oxford, England. There I learnt the values of craftsmanship, dedication to learning new things, and what you can accomplish when you live miles from anything interesting going on.',
     'I had a passion for the creative, and loved art, science, math and design. My father is a carpenter by trade but was at the forefront of the CAD system development, so the first program that I wrote was to control a Laser cutter. Since then I have had a great passion to try and find things to take apart, tinker with and perfect.',
     'I went to university to study **Photography**, the ultimate blend of science, art and technology, and got hooked on creating my own cameras, culminating in my final year project of deconstructed images.',
     'As part of this course I started dipping into web technologies as a hobby, making self promotional materials and adverts for shows that we were putting on at the time.',
-    'I met my wife when studying, and moved to Finland after we graduated.',
+    'I met my wife --Katri-- when studying, and moved to Finland after we graduated.',
     'While in Finland I self taught myself Java, and from there Flash Actionscript. With the breaking of HTML5 I learned javascript and PHP, css and HTML (correctly this time) as well as various database languages as needed. A few years later and I am still **working** hands on, but now happily leading a team of developers, running modern web tech like react and redux as well as learning IOS and Android developement as well as C for hardware applications and Finnish. Guess which is the hardest...',
     'We moved back to England in 2017 and are looking forward to new things and new people!',
     getHintSpace(),
@@ -417,14 +447,18 @@ function getAboutDefault() {
 
 function getAbout(call, args, command) {
   let arr = [];
+  let level = OK;
+  let message = '';
   if (args.length > 1) {
     arr = getArgumentInvalid(command, 1);
   } else if (args.length === 1) {
     arr = (aboutMap[args[0]] || aboutMap.notFound)(call, args, command);
   } else {
     arr = getAboutDefault();
+    level = WARN;
+    message = 'Warning, irregular data transmission, possible data leak detected. See log for details.';
   }
-  return callResponse.bind(this, call, arr);
+  return callResponse.bind(this, call, arr, level, message);
 }
 
 commandMap[COMMAND_ABOUT] = getAbout;
@@ -568,6 +602,7 @@ commandMap[COMMAND_OPEN] = openLink;
 
 export const COMMAND_HELP = 'help';
 export const COMMAND_HELP_ALT1 = 'man';
+const login = 'log in to the admin system, command syntax: username -p password';
 
 const helpList = [
   { command: COMMAND_HELP, man: 'Warning: Cyclical reference detected' },
@@ -578,8 +613,18 @@ const helpList = [
   { command: COMMAND_OPEN, man: 'Open a link' },
   { command: COMMAND_CONTACT, man: 'Contact information' },
   { command: COMMAND_FLICKER, man: 'Adjust animations on website' },
+
+  { command: COMMAND_SUDO, man: login },
+  { command: COMMAND_SU, man: login },
+  { command: COMMAND_LOGIN, man: login },
 ];
 
+function filterHelp(val) {
+  return val.command !== COMMAND_HELP &&
+    val.command !== COMMAND_SUDO &&
+    val.command !== COMMAND_SU &&
+    val.command !== COMMAND_LOGIN;
+}
 function getHelpFromArr(arr) {
   const maxLength = arr.reduce((prev, next) => {
     const nextLength = next.command.length > prev ? next.command.length : prev;
@@ -603,7 +648,7 @@ function getHelp(call, args, command) {
     res = filtered.length === 0 ?
       getArgumentNotFound(call, args.join(), command) : getHelpFromArr(filtered);
   } else {
-    res = ['Available commands:'].concat(getHelpFromArr(helpList.filter(val => val.command !== COMMAND_HELP)));
+    res = ['Available commands:'].concat(getHelpFromArr(helpList.filter(filterHelp)));
   }
   return callResponse.bind(this, call, res);
 }

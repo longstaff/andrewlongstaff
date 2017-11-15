@@ -1,6 +1,7 @@
 import ReactGA from 'react-ga';
 import commandFactory from './commandFactory';
 import { setAppFlicker } from '../app/AppActions';
+import writeToConsole from '../console/Console';
 
 export const CALL_UPDATE = 'com.andrewlongstaff.monitor.call.update';
 export const CALL_ADD = 'com.andrewlongstaff.monitor.call.add';
@@ -67,7 +68,7 @@ function loopAsync(arr, ind, dispatch, update) {
     return true;
   });
 }
-export function callResponse(call, response) {
+export function callResponse(call, response, errorState = 0, specialLog = '') {
   const id = uuid();
   return (dispatch) => {
     dispatch(setLoading());
@@ -83,6 +84,9 @@ export function callResponse(call, response) {
         dispatch(clearLoading());
       });
     }
+
+    writeToConsole(`User request: exec(${call})`);
+    writeToConsole(specialLog, errorState);
   };
 }
 

@@ -1,4 +1,5 @@
 import React, { Component } from 'react';
+import Glitch from '../glitch/Glitch';
 import './Response.css';
 
 export default class Response extends Component {
@@ -43,7 +44,8 @@ export default class Response extends Component {
     let noop = this.parseThroughVal;
     let highlights = this.getHighlightsVals.bind(this, noop);
     let links = this.getLinksVals.bind(this, highlights);
-    let images = this.getImgsVals.bind(this, links);
+    let glitch = this.getGlitchVals.bind(this, links);
+    let images = this.getImgsVals.bind(this, glitch);
 
     return images(value);
   }
@@ -81,6 +83,18 @@ export default class Response extends Component {
   }
   addLink(val, key) {
     return <span key={key} className="Response-link">{val}</span>
+  }
+
+  getGlitchVals(nextCall = this.parseThroughVal, value) {
+    return Array.prototype.concat.call([], this.getGlitch(value).map(
+      this.makeValArr.bind(this, this.parseInd.bind(this, nextCall, this.addGlitch))
+    ));
+  }
+  getGlitch(val) {
+    return val.split(/\-{2,2}/);
+  }
+  addGlitch(val, key) {
+    return <Glitch key={key} className="Response-glitch">{val}</Glitch>
   }
 
   getImgsVals(nextCall = this.parseThroughVal, value) {

@@ -1,6 +1,10 @@
 import ReactGA from 'react-ga';
 import commandFactory from './commandFactory';
-import { setAppFlicker } from '../app/AppActions';
+import {
+  setAppFlicker,
+  startGame,
+  setAdmin,
+} from '../app/AppActions';
 import writeToConsole from '../console/Console';
 
 export const CALL_UPDATE = 'com.andrewlongstaff.monitor.call.update';
@@ -92,12 +96,13 @@ export function callResponse(call, response, errorState = 0, specialLog = '') {
 
 // Thunk for async results
 export function sendCall(call) {
-  return (dispatch) => {
+  return (dispatch, getState) => {
     ReactGA.event({
       category: 'command',
       action: call,
     });
-    const response = commandFactory(call);
+    const state = getState();
+    const response = commandFactory(call, state.gameState);
     dispatch(response());
   };
 }
@@ -109,15 +114,39 @@ export function setFlicker(flicker, call, response) {
   };
 }
 
+export function setStartGame(call, response, errorState = 0, specialLog = '') {
+  return (dispatch) => {
+    dispatch(callResponse(call, response, errorState, specialLog));
+
+    mockAsync(1500).then(() => {
+      dispatch(startGame());
+    });
+  };
+}
+
+export function setAdminStatus(status, call, response, errorState = 0, specialLog = '') {
+  return (dispatch) => {
+    dispatch(setAdmin(status));
+    dispatch(callResponse(call, response, errorState, specialLog));
+  };
+}
+
 export function addWelcomeMessageIfNeeded() {
   return (dispatch, getState) => {
     const state = getState();
-    if (state.monitor.history && state.monitor.history.length && state.monitor.history[state.monitor.history.length - 1].response !== 'Welcome Back') {
+    const { admin } = state.gameState;
+
+    if (
+      state.monitor.history &&
+      state.monitor.history.length &&
+      state.monitor.history[state.monitor.history.length - 1].response !== 'Welcome Back, Guest' &&
+      state.monitor.history[state.monitor.history.length - 1].response !== 'Welcome Back, Andrew'
+    ) {
       ReactGA.event({
         category: 'return',
-        action: 'welcome',
+        action: admin ? 'admin' : 'guest',
       });
-      dispatch(addMessage('Welcome Back'));
+      dispatch(addMessage(`Welcome Back, ${admin ? 'Andrew' : 'Guest'}`));
     }
   };
 }

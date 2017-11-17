@@ -3,6 +3,8 @@ import {
   callResponse,
   clearHistory,
   setFlicker,
+  setStartGame,
+  setAdminStatus,
 } from './MonitorActions';
 import {
   OK,
@@ -44,29 +46,108 @@ const commandMap = {
 export const COMMAND_SUDO = 'sudo';
 export const COMMAND_SU = 'su';
 export const COMMAND_LOGIN = 'login';
-function getLogin(call, args) {
+function getLogin(call, args, _, state) {
+  let resp;
   let arr = 'Incorrect login, please try again';
   let level = ERROR;
   let message = 'Incorrect credentials, please try again';
 
-  if (!args || !args.length) {
+  if (state.admin) {
+    arr = 'Already admin, cannot elevate further';
+    level = WARN;
+    message = 'Already admin, cannot elevate further';
+    resp = callResponse.bind(this, call, arr, level, message);
+  } else if (!args || !args.length) {
     arr = 'Missing parameters: username, password';
+    resp = callResponse.bind(this, call, arr, level, message);
   } else if (args.length !== 3 || args[1] !== '-p') {
     arr = 'Missing parameter: password';
+    resp = callResponse.bind(this, call, arr, level, message);
   } else if (args.join('') === 'andrew-pkatri') {
     arr = 'Welcome back Andrew, the strongest Avenger';
     level = OK;
     message = 'Login complete, to access code environment type start';
+    resp = setAdminStatus.bind(this, true, call, arr, level, message);
   } else if (args.join('') === 'katri-pandrew') {
     arr = 'User temporarily disabled, please contact your administrator: andrew.';
     level = WARN;
     message = 'User disabled for weak password, please contact admin to reset to something stronger.';
+    resp = callResponse.bind(this, call, arr, level, message);
+  } else if (args[0] === 'andrew') {
+    arr = 'Incorrect password, please try again';
+    message = 'Did you forget your password? Hint: Ask the Wife';
+    resp = callResponse.bind(this, call, arr, level, message);
+  } else if (args[0] === 'katri') {
+    arr = 'Incorrect password, please try again';
+    message = 'Did you forget your password? Hint: Spouse';
+    resp = callResponse.bind(this, call, arr, level, message);
   }
-  return callResponse.bind(this, call, arr, level, message);
+  return resp;
 }
 commandMap[COMMAND_SUDO] = getLogin;
 commandMap[COMMAND_SU] = getLogin;
 commandMap[COMMAND_LOGIN] = getLogin;
+
+/* *********************** Logout ************************** */
+export const COMMAND_LOGOUT = 'logout';
+function getLogout(call, args, _, state) {
+  let resp;
+  let arr = 'Incorrect login, please try again';
+  let level = ERROR;
+  let message = 'Incorrect credentials, please try again';
+
+  if (state.admin) {
+    arr = 'Logout successful, have a nice day.';
+    level = OK;
+    message = 'Logout complete.';
+    resp = setAdminStatus.bind(this, false, call, arr, level, message);
+  } else {
+    arr = '';
+    arr = [
+      'Not logged in, cannot log out',
+      'Your current access level: Guest',
+    ];
+    message = 'Not logged in';
+    resp = callResponse.bind(this, call, arr, level, message);
+  }
+  return resp;
+}
+commandMap[COMMAND_LOGOUT] = getLogout;
+
+/* *********************** Run ************************** */
+export const COMMAND_START = 'start';
+export const COMMAND_START_ALT1 = 'begin';
+export const COMMAND_START_ALT2 = 'make';
+export const COMMAND_START_ALT3 = 'run';
+export const COMMAND_START_ALT4 = 'serve';
+function getStart(call, args, _, state) {
+  let resp;
+  let arr = 'Incorrect login, please try again';
+  let level = ERROR;
+  let message = 'Incorrect credentials, please try again';
+
+  if (state.admin) {
+    arr = 'Starting work environment.';
+    level = OK;
+    message = 'Starting work environment v1.1.0, have a nice day.';
+    resp = setStartGame.bind(this, call, arr, level, message);
+  } else {
+    arr = [
+      'You do not have enough permissions to run this program.',
+      'Your current access level: Guest',
+      'Please login and try again.',
+    ];
+    level = ERROR;
+    message = 'You do not have enough permissions to run this program, please elevate your permissions and try again.';
+    resp = callResponse.bind(this, call, arr, level, message);
+  }
+  return resp;
+}
+commandMap[COMMAND_START] = getStart;
+commandMap[COMMAND_START_ALT1] = getStart;
+commandMap[COMMAND_START_ALT2] = getStart;
+commandMap[COMMAND_START_ALT3] = getStart;
+commandMap[COMMAND_START_ALT4] = getStart;
 
 /* *********************************************************************** */
 /* ******************************* Jokes ********************************* */
@@ -670,7 +751,8 @@ const splitArguments = (input) => {
 
 /* *********************** Default export ************************** */
 
-export default (call) => {
+export default (call, state) => {
   const input = splitArguments(call);
-  return (commandMap[input.command] || commandMap.notFound)(call, input.arguments, input.command);
+  const callFunc = (commandMap[input.command] || commandMap.notFound);
+  return callFunc(call, input.arguments, input.command, state);
 };

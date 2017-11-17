@@ -2,6 +2,7 @@ import React, { Component } from 'react';
 import { connect } from 'react-redux';
 import './App.css';
 import Monitor from '../monitor/Monitor';
+import Game from '../game/Game';
 
 export class App extends Component {
 
@@ -18,6 +19,15 @@ export class App extends Component {
   }
 
   render() {
+    let content;
+    if (this.props.game) {
+      content = <Game />
+    } else {
+      content = <Monitor
+          restart = { this.props.restart }
+          setScroll = { this.resizeListener }
+        />
+    }
     return (
       <div
         className="App"
@@ -25,10 +35,7 @@ export class App extends Component {
       >
         <div className={ this.props.flicker ? "flicker flicker-animate" : "flicker" }>
           <div className="interlace"/>
-          <Monitor
-            restart = { this.props.restart }
-            setScroll = { this.resizeListener }
-          />
+          {content}
         </div>
       </div>
     );
@@ -50,7 +57,8 @@ export class App extends Component {
 
 function mapStateToProps(state) {
   return {
-    flicker: state.flicker
+    flicker: state.flicker,
+    game: state.gameState.game
   };
 }
 

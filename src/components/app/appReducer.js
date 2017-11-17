@@ -1,5 +1,9 @@
 import { combineReducers } from 'redux';
-import { SET_FLICKER } from './AppActions';
+import {
+  SET_FLICKER,
+  SET_ADMIN,
+  SET_GAME,
+} from './AppActions';
 import monitor from '../monitor/monitorReducer';
 
 export function flicker(state = true, action) {
@@ -11,7 +15,29 @@ export function flicker(state = true, action) {
   }
 }
 
+const gameStateInit = {
+  admin: false,
+  game: false
+};
+export function gameState(state = gameStateInit, action) {
+  switch (action.type) {
+    case SET_ADMIN:
+      return {
+        ...state,
+        admin: action.admin,
+      };
+    case SET_GAME:
+      return {
+        ...state,
+        game: action.game,
+      };
+    default:
+      return state;
+  }
+}
+
 export default combineReducers({
   flicker,
-  monitor
+  gameState,
+  monitor,
 });

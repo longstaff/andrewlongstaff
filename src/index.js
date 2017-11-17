@@ -18,6 +18,9 @@ const prevState = loadConfig();
 if (prevState && prevState.monitor) {
   prevState.monitor.loader = false;
 }
+if (prevState && prevState.gameState) {
+  prevState.gameState.game = false;
+}
 
 const hadPrevState = prevState !== undefined;
 const middleware = [

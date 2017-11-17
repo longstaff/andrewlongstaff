@@ -106,10 +106,10 @@ function mapStateToProps(state) {
   };
 }
 
-function mapDispatchToProps(dispatch) {
+function mapDispatchToProps(dispatch, getState) {
   return bindActionCreators({
     ...MonitorActions
-  }, dispatch);
+  }, dispatch, getState);
 }
 
 export default connect(mapStateToProps, mapDispatchToProps)(Monitor);

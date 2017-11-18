@@ -1,6 +1,10 @@
+import { sendCall } from '../monitor/MonitorActions';
+
 export const OK = 0;
 export const WARN = 1;
 export const ERROR = 2;
+
+let internalStore;
 
 function logToConsole(message) {
   console.log(message);
@@ -42,3 +46,14 @@ export default function writeToConsole(message = '', error = 0) {
     logger(logMessage);
   }
 }
+
+export function setStore(store) {
+  internalStore = store;
+}
+
+const exposeToConsole = {
+  exec: (command) => {
+    sendCall(command, true)(internalStore.dispatch, internalStore.getState);
+  }
+};
+Object.assign(window, exposeToConsole);

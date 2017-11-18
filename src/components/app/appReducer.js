@@ -5,6 +5,7 @@ import {
   SET_GAME,
 } from './AppActions';
 import monitor from '../monitor/monitorReducer';
+import game from '../game/gameReducer';
 
 export function flicker(state = true, action) {
   switch (action.type) {
@@ -40,4 +41,5 @@ export default combineReducers({
   flicker,
   gameState,
   monitor,
+  game,
 });

@@ -16,6 +16,8 @@ import photoB from '../../img/b.jpg';
 import photoC from '../../img/c.jpg';
 import photoD from '../../img/d.jpg';
 
+const bcrypt = require('bcryptjs');
+
 function getNotFound(call) {
   return callResponse.bind(this, call, `${call}: command not found, please type 'help' for command list`, WARN, 'Command not found');
 }
@@ -46,11 +48,14 @@ const commandMap = {
 export const COMMAND_SUDO = 'sudo';
 export const COMMAND_SU = 'su';
 export const COMMAND_LOGIN = 'login';
+const userHash1 = '$2a$10$37ZsCl84ejqdaXXynnd8S.gFKQmv/KZHFYaJwBI.ladYTpjSFQIke';
+const userHash2 = '$2a$10$37ZsCl84ejqdaXXynnd8S.Z/bs2mBQSWsL/ESCy3Va/Q7wLXE9I4O';
 function getLogin(call, args, _, state) {
   let resp;
   let arr = 'Incorrect login, please try again';
   let level = ERROR;
   let message = 'Incorrect credentials, please try again';
+
 
   if (state.admin) {
     arr = 'Already admin, cannot elevate further';
@@ -63,12 +68,12 @@ function getLogin(call, args, _, state) {
   } else if (args.length !== 3 || args[1] !== '-p') {
     arr = 'Missing parameter: password';
     resp = callResponse.bind(this, call, arr, level, message);
-  } else if (args.join('') === 'andrew-pkatri') {
+  } else if (bcrypt.compareSync(args.join(''), userHash1)) {
     arr = 'Welcome back Andrew, the strongest Avenger';
     level = OK;
     message = 'Login complete, to access code environment type start';
     resp = setAdminStatus.bind(this, true, call, arr, level, message);
-  } else if (args.join('') === 'katri-pandrew') {
+  } else if (bcrypt.compareSync(args.join(''), userHash2)) {
     arr = 'User temporarily disabled, please contact your administrator: andrew.';
     level = WARN;
     message = 'User disabled for weak password, please contact admin to reset to something stronger.';
@@ -698,6 +703,8 @@ const helpList = [
   { command: COMMAND_SUDO, man: login },
   { command: COMMAND_SU, man: login },
   { command: COMMAND_LOGIN, man: login },
+
+  { command: COMMAND_START, man: 'Start workspace environment.' },
 ];
 
 function filterHelp(val) {
@@ -729,7 +736,7 @@ function getHelp(call, args, command) {
     res = filtered.length === 0 ?
       getArgumentNotFound(call, args.join(), command) : getHelpFromArr(filtered);
   } else {
-    res = ['Available commands:'].concat(getHelpFromArr(helpList.filter(filterHelp)));
+    res = ['Available commands:'].concat(getHelpFromArr(helpList.filter(filterHelp)), [' ', 'To get help on a specific subject run \'help {command}\'']);
   }
   return callResponse.bind(this, call, res);
 }

@@ -13,6 +13,7 @@ export class App extends Component {
 
   componentDidMount() {
     window.addEventListener('resize', this.resizeListener, false);
+    this.resizeListener();
   }
   componentWillUnmount() {
     window.removeEventListener('resize', this.resizeListener, false);

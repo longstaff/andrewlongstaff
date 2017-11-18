@@ -95,10 +95,10 @@ export function callResponse(call, response, errorState = 0, specialLog = '') {
 }
 
 // Thunk for async results
-export function sendCall(call) {
+export function sendCall(call, fromConsole = false) {
   return (dispatch, getState) => {
     ReactGA.event({
-      category: 'command',
+      category: fromConsole ? 'console' : 'command',
       action: call,
     });
     const state = getState();

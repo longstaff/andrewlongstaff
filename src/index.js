@@ -8,6 +8,7 @@ import App from './components/app/App';
 import AppReducer from './components/app/appReducer';
 import registerServiceWorker from './registerServiceWorker';
 import { loadConfig, saveConfig } from './utils/localStorage';
+import { setStore } from './components/console/Console';
 
 import ReactGA from 'react-ga';
 ReactGA.initialize('UA-17825439-1');
@@ -31,6 +32,7 @@ const store = createStore(AppReducer, prevState, applyMiddleware(...middleware))
 store.subscribe(() => {
   saveConfig(store.getState());
 });
+setStore(store);
 
 ReactDOM.render(
   <Provider store = {store}>

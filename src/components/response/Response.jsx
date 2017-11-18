@@ -91,7 +91,7 @@ export default class Response extends Component {
     ));
   }
   getGlitch(val) {
-    return val.split(/\-{2,2}/);
+    return val.split(/-{2,2}/);
   }
   addGlitch(val, key) {
     return <Glitch key={key} className="Response-glitch">{val}</Glitch>

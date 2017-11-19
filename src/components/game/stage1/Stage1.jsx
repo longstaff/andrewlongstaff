@@ -1,21 +1,24 @@
 import React from 'react';
 import Display from '../display/Display';
-import TimedButton from '../timed-button/TimedButton'
+import Buttons from '../buttons/Buttons'
 
 export default (props) => (
   <div>
     <Display
       count={props.totalCodeLines}
-      available={props.availableCodeLines}
       quitHandler={props.quitHandler}
     />
-    <TimedButton
-      onClick={() => {props.addLines(1)}}
-      resetSeconds={5}
-    >Write Code</TimedButton>
-    <TimedButton
-      onClick={() => {props.spendCode(1)}}
-      resetSeconds={5}
-    >Spend Code</TimedButton>
+    <Buttons
+      addLine = {() => {props.addCode(1);}}
+      drinkTea = {() => {props.addCaffine(1);}}
+      drinkCoffee = {() => {props.addCaffine(3);}}
+      researchOverflow = {() => {props.addCode(100);}}
+      researchGithub = {() => {props.addCode(1000);}}
+      writeCodeReset = {Math.max(0.5, 5 - props.caffine)}
+      teaReset = {20}
+      coffeeReset = {50}
+      overflowReset = {100}
+      githubReset = {500}
+    >Write Code</Buttons>
   </div>
 );

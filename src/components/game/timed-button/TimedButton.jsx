@@ -36,6 +36,14 @@ export default class TimedButton extends Component {
       cancelAnimationFrame(this.frameRequest);
     }
   }
+  componentDidUpdate(oldProps, oldState) {
+    if (this.state.percComplete < 1 && oldProps.resetSeconds !== this.props.resetSeconds) {
+      this.setState({
+        clickTime:  getTimestamp() - (this.state.percComplete * (this.props.resetSeconds * 1000)),
+      });
+      this.frameRequest = requestAnimationFrame(this.calculatePerc);
+    }
+  }
 
   fireClick() {
     if (this.state.percComplete >= 1) {

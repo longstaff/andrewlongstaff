@@ -13,6 +13,7 @@ export class Game extends Component {
   dt = 0;
   last;
   frameRequest = null;
+  caffineTail = 3000;
 
   constructor(props) {
     super(props);
@@ -24,10 +25,17 @@ export class Game extends Component {
     this.updateFrame = this.updateFrame.bind(this);
     this.spendCode = this.spendCode.bind(this);
     this.addLines = this.addLines.bind(this);
+    this.addCodeLines = this.addCodeLines.bind(this);
+    this.addCaffine = this.addCaffine.bind(this);
 
     this.state = {
       splash: true,
       tick: false,
+
+      caffine: 0,
+      firstCaffine: 0,
+      tailOffCaffine: 0,
+      linesMultiplier: 1, //Calculate this based on the unlocked items
     }
   }
 
@@ -57,6 +65,9 @@ export class Game extends Component {
       spendCode={this.spendCode}
       addLines={this.addLines}
       quitHandler={this.triggerEndGame}
+      caffine={this.state.caffine}
+      addCode={this.addCodeLines}
+      addCaffine={this.addCaffine}
     />;
 
     return (
@@ -89,15 +100,40 @@ export class Game extends Component {
     this.dt = this.dt + Math.min(1, (this.now - this.last) / 1000);
     while (this.dt > this.step) {
       this.dt = this.dt - this.step;
-      this.updateFrame(this.step);
+      this.updateFrame(this.now);
     }
     // this.subrender(this.dt);
     this.last = this.now;
     this.frameRequest = requestAnimationFrame(this.runTick);
   }
 
-  updateFrame() {
-    // this.props.addCodeLines(1);
+  addCodeLines(lines) {
+    this.props.addCodeLines(lines * this.state.linesMultiplier)
+  }
+  addCaffine(amount) {
+    let now = getTimestamp();
+    this.setState({
+      caffine: this.state.caffine + amount,
+      firstCaffine: this.state.firstCaffine || now,
+      tailOffCaffine: now + (this.caffineTail * amount),
+    })
+  }
+
+  updateFrame(timestamp) {
+    let newState = {};
+    let needsUpdate = false;
+    if (this.state.caffine > 0) {
+      if (timestamp > this.state.tailOffCaffine) {
+        newState.caffine = Math.max(0, this.state.caffine - ((timestamp - this.state.tailOffCaffine) / 1000));
+        debugger;
+        needsUpdate = true;
+      }
+    } else if (this.state.firstCaffine) {
+      newState.firstCaffine = 0;
+      needsUpdate = true;
+    }
+
+    if (needsUpdate) this.setState(newState);
   }
 
   spendCode(amount) {

@@ -1,6 +1,6 @@
 import React, { Component } from 'react';
 import { getTimestamp } from '../utils/Utils';
-import './TimedButton.css';
+import PercButton from '../perc-button/PercButton';
 
 export default class TimedButton extends Component {
   frameRequest = null;
@@ -17,19 +17,11 @@ export default class TimedButton extends Component {
   }
 
   render() {
-    return <div className='TimedButton'>
-      <p className='TimedButton-label TimedButton-label-top' style={{
-        width: 100,
-        clip: `rect(0px, ${this.state.percComplete * 200}px, 30px, 0px)`,
-      }}>{this.props.children}</p>
-      <div className='TimedButton-progress' style={{width: Math.round(this.state.percComplete * 100) + '%'}}/>
-      <p className='TimedButton-label TimedButton-label-bottom'>{this.props.children}</p>
-      <button
-        className='TimedButton-button'
+    return <PercButton
         onClick={this.fireClick}
-        disabled={this.state.percComplete < 1}
-      ></button>
-    </div>
+        complete={this.state.percComplete*100}
+        total={100}
+    >{this.props.children}</PercButton>
   }
   componentWillUnmount() {
     if (this.frameRequest) {

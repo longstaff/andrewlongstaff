@@ -1,6 +1,7 @@
 import React from 'react';
 import Display from '../display/Display';
 import Buttons from '../buttons/Buttons'
+import Projects from '../projects/Projects'
 
 export default (props) => (
   <div>
@@ -19,6 +20,9 @@ export default (props) => (
       coffeeReset = {50}
       overflowReset = {100}
       githubReset = {500}
-    >Write Code</Buttons>
+    />
+    <Projects
+      projects={props.projects}
+    />
   </div>
 );

@@ -1,0 +1,45 @@
+.PercButton {
+  width:200px;
+  height:30px;
+  position: relative;
+}
+.PercButton-label {
+  pointer-events: none;
+  margin: 0;
+  padding: 5px;
+  position: absolute;
+  overflow: hidden;
+}
+.PercButton-label-bottom{
+  color: #fff;
+  z-index: 1;
+}
+.PercButton-label-top{
+  color: #000;
+  z-index: 3;
+}
+
+.PercButton-progress {
+  pointer-events: none;
+  display: block;
+  width:100%;
+  height:100%;
+  background: #ddd;
+  position: absolute;
+  z-index: 2;
+}
+.PercButton-button {
+  display: block;
+  width:100%;
+  height:100%;
+  text-align: center;
+  background: #000;
+  border: 1px solid #fff;
+  box-sizing: border-box;
+}
+
+.PercButton--disabled .PercButton-label {color:#777; text-shadow: 0 0 2px #777;}
+.PercButton--disabled .PercButton-progress {background: #333;}
+.PercButton--disabled .PercButton-button {border-color: #777;}
+.PercButton--selected .PercButton-progress {background: #eee;}
+.PercButton--selected .PercButton-button {border-width: 4px;}

@@ -27,6 +27,7 @@ export class Game extends Component {
     this.addLines = this.addLines.bind(this);
     this.addCodeLines = this.addCodeLines.bind(this);
     this.addCaffine = this.addCaffine.bind(this);
+    this.getProjects = this.getProjects.bind(this);
 
     this.state = {
       splash: true,
@@ -36,7 +37,30 @@ export class Game extends Component {
       firstCaffine: 0,
       tailOffCaffine: 0,
       linesMultiplier: 1, //Calculate this based on the unlocked items
+
+      projectCompletion: {
+        project1: 1000,
+        project2: 500,
+        project3: 200,
+      },
+      projectSelected: 'project1',
+
+      projects: {
+        project1: {
+          title: 'AI Project',
+          total: 2000
+        },
+        project2: {
+          title: 'Other Project',
+          total: 2000
+        },
+        project3: {
+          title: 'Disabled Project',
+          total: 2000
+        }
+      }
     }
+
   }
 
   componentDidMount() {
@@ -68,6 +92,7 @@ export class Game extends Component {
       caffine={this.state.caffine}
       addCode={this.addCodeLines}
       addCaffine={this.addCaffine}
+      projects={this.getProjects()}
     />;
 
     return (
@@ -109,6 +134,21 @@ export class Game extends Component {
 
   addCodeLines(lines) {
     this.props.addCodeLines(lines * this.state.linesMultiplier)
+    let project = this.state.projectCompletion[this.state.projectSelected];
+    if (project) {
+      this.setState({
+        projectCompletion: Object.assign({}, this.state.projectCompletion, {
+          [this.state.projectSelected]: this.state.projectCompletion[this.state.projectSelected] + lines
+        })
+      });
+    } else {
+      this.setState({
+        projectCompletion: [
+          ...this.state.projectCompletion,
+          [this.state.projectSelected]: lines
+        ]
+      });
+    }
   }
   addCaffine(amount) {
     let now = getTimestamp();
@@ -125,7 +165,6 @@ export class Game extends Component {
     if (this.state.caffine > 0) {
       if (timestamp > this.state.tailOffCaffine) {
         newState.caffine = Math.max(0, this.state.caffine - ((timestamp - this.state.tailOffCaffine) / 1000));
-        debugger;
         needsUpdate = true;
       }
     } else if (this.state.firstCaffine) {
@@ -141,6 +180,29 @@ export class Game extends Component {
   }
   addLines(amount) {
     this.props.addCodeLines(amount);
+  }
+
+  getProjects() {
+    let keys = Object.keys(this.state.projects);
+    return keys.map((val) => {
+      let project = this.state.projects[val];
+      let completion = this.state.projectCompletion[val] || 0;
+
+      return {
+        id: val,
+        label: project.title,
+        complete: completion,
+        total: project.total,
+        onClick: this.selectProject.bind(this, val),
+        selected: this.state.projectSelected === val,
+        disabled: false,
+      }
+    })
+  }
+  selectProject(key) {
+    this.setState({
+      projectSelected: key
+    })
   }
 }
 

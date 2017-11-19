@@ -28,6 +28,7 @@ export default (props) => {
     >Research on Github</TimedButton>
 
   return <div>
+    <h3>Buttons</h3>
     {writeCode}
     {drinkTea}
     {drinkCoffee}

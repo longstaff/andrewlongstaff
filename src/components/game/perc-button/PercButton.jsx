@@ -7,6 +7,7 @@ export default class PercButton extends Component {
   constructor(props) {
     super(props);
     this.calculatePerc = this.calculatePerc.bind(this);
+    this.onClick = this.onClick.bind(this);
   }
 
   render() {
@@ -20,12 +21,16 @@ export default class PercButton extends Component {
       <p className='PercButton-label PercButton-label-bottom'>{this.props.children}</p>
       <button
         className='PercButton-button'
-        onClick={this.props.onClick}
+        onClick={this.onClick}
         disabled={this.props.disabled}
       ></button>
     </div>
   }
   calculatePerc() {
     return Math.max(0, Math.min(1, this.props.complete/this.props.total));
+  }
+  onClick() {
+    const perc = this.calculatePerc();
+    return this.props.onClick(perc === 1);
   }
 }

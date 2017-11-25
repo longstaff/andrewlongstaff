@@ -13,7 +13,7 @@ export default (props) => {
         disabled={val.disabled}
         selected={val.selected}
       >
-        {val.label}
+        {val.title}
       </PercButton>
     ))}
   </div>

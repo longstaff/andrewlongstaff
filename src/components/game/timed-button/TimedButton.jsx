@@ -13,6 +13,7 @@ export default class TimedButton extends Component {
 
     this.state = {
       percComplete: 1,
+
     }
   }
 

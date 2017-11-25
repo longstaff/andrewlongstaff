@@ -2,10 +2,14 @@ import React, { Component } from 'react';
 import { bindActionCreators } from 'redux';
 import { connect } from 'react-redux';
 import { endGame } from '../app/AppActions';
-import { addCodeLines, reduceCodeLines } from './GameActions';
+import {
+  setProjectComplete,
+  addProjectProgress,
+} from './GameActions';
 import Splash from './splash/Splash';
 import Stage1 from './stage1/Stage1';
 import { getTimestamp } from './utils/Utils';
+import ProjectManager from './utils/ProjectManager'
 
 export class Game extends Component {
   step = 1/60;
@@ -28,6 +32,7 @@ export class Game extends Component {
     this.addCodeLines = this.addCodeLines.bind(this);
     this.addCaffine = this.addCaffine.bind(this);
     this.getProjects = this.getProjects.bind(this);
+    this.clickedProject = this.clickedProject.bind(this);
 
     this.state = {
       splash: true,
@@ -38,27 +43,7 @@ export class Game extends Component {
       tailOffCaffine: 0,
       linesMultiplier: 1, //Calculate this based on the unlocked items
 
-      projectCompletion: {
-        project1: 1000,
-        project2: 500,
-        project3: 200,
-      },
-      projectSelected: 'project1',
-
-      projects: {
-        project1: {
-          title: 'AI Project',
-          total: 2000
-        },
-        project2: {
-          title: 'Other Project',
-          total: 2000
-        },
-        project3: {
-          title: 'Disabled Project',
-          total: 2000
-        }
-      }
+      projectSelected: '',
     }
 
   }
@@ -133,22 +118,8 @@ export class Game extends Component {
   }
 
   addCodeLines(lines) {
-    this.props.addCodeLines(lines * this.state.linesMultiplier)
-    let project = this.state.projectCompletion[this.state.projectSelected];
-    if (project) {
-      this.setState({
-        projectCompletion: Object.assign({}, this.state.projectCompletion, {
-          [this.state.projectSelected]: this.state.projectCompletion[this.state.projectSelected] + lines
-        })
-      });
-    } else {
-      this.setState({
-        projectCompletion: [
-          ...this.state.projectCompletion,
-          [this.state.projectSelected]: lines
-        ]
-      });
-    }
+    let amount = lines * this.state.linesMultiplier;
+    this.props.addProjectProgress(this.state.projectSelected, amount);
   }
   addCaffine(amount) {
     let now = getTimestamp();
@@ -183,25 +154,27 @@ export class Game extends Component {
   }
 
   getProjects() {
-    let keys = Object.keys(this.state.projects);
-    return keys.map((val) => {
-      let project = this.state.projects[val];
-      let completion = this.state.projectCompletion[val] || 0;
+    let projects = ProjectManager(this.props);
 
-      return {
-        id: val,
-        label: project.title,
-        complete: completion,
-        total: project.total,
-        onClick: this.selectProject.bind(this, val),
-        selected: this.state.projectSelected === val,
-        disabled: false,
-      }
+    console.log("Projects", projects);
+
+    return projects.map((val) => {
+      return Object.assign({}, val, {
+        onClick: this.clickedProject.bind(this, val),
+        selected: val.id === this.state.projectSelected,
+      });
     })
   }
-  selectProject(key) {
+  clickedProject(project, isComplete) {
+    if (isComplete) this.completeProject(project);
+    else this.selectProject(project);
+  }
+  completeProject(project) {
+    this.props.setProjectComplete(project.id);
+  }
+  selectProject(project) {
     this.setState({
-      projectSelected: key
+      projectSelected: project.id,
     })
   }
 }
@@ -212,15 +185,17 @@ export class Game extends Component {
 
 function mapStateToProps(state) {
   return {
-    gameState: state.game.gameState
+    gameState: state.game.gameState,
+    complete: state.game.complete,
+    progress: state.game.progress,
   };
 }
 
 function mapDispatchToProps(dispatch, getState) {
   return bindActionCreators({
     endGame,
-    addCodeLines,
-    reduceCodeLines,
+    setProjectComplete,
+    addProjectProgress,
   }, dispatch, getState);
 }
 

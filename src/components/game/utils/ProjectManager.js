@@ -1,20 +1,15 @@
 import projectList from './projectList';
 
-/*
-  projectCompletion: {
-    project1: 1000,
-    project2: 500,
-    project3: 200,
-  },
-  projectSelected: 'project1',
-*/
-
 function isVisible(gameState, completeState, val) {
-  return completeState[val.id] !== true && val.isActive(gameState);
+  return completeState[val.id] !== true && val.isActive(gameState, completeState);
 }
 function getCurrentProjects(gameState, completeState) {
   return projectList.filter(isVisible.bind(this, gameState, completeState)).map((val) => {
-    const { id, title, total } = val;
+    const {
+      id,
+      title,
+      total,
+    } = val;
     return {
       id,
       title,
@@ -30,6 +25,10 @@ function setPercComplete(progressState, val) {
   });
 }
 
-export default function(state) {
-  return getCurrentProjects(state.gameState, state.complete).map(setPercComplete.bind(this, state.progress));
+export function triggerProjectComplete(id, dispatch) {
+  return projectList.find(val => val.id === id).completeProject(dispatch);
+}
+export function getProjectsMap(state) {
+  return getCurrentProjects(state.gameState, state.complete, state.progress)
+    .map(setPercComplete.bind(this, state.progress));
 }

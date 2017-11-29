@@ -10,7 +10,7 @@ export default class Project {
   isActive(state) {
     return this.rules ? this.rules.call(this, state) : true;
   }
-  complete() {
-    return this.completeAction ? this.completeAction.call(this) : false;
+  completeProject(dispatch) {
+    return this.completeAction ? this.completeAction.call(this, dispatch) : {};
   }
 }

@@ -9,7 +9,16 @@ import {
 import Splash from './splash/Splash';
 import Stage1 from './stage1/Stage1';
 import { getTimestamp } from './utils/Utils';
-import ProjectManager from './utils/ProjectManager'
+import { getProjectsMap, triggerProjectComplete } from './utils/ProjectManager';
+import buttonList from './utils/buttonList';
+
+import {
+  BUTTON_CODE,
+  BUTTON_TEA,
+  BUTTON_COFFEE,
+  BUTTON_STACK,
+  BUTTON_GITHUB,
+} from './constants';
 
 export class Game extends Component {
   step = 1/60;
@@ -27,8 +36,6 @@ export class Game extends Component {
     this.startTick = this.startTick.bind(this);
     this.runTick = this.runTick.bind(this);
     this.updateFrame = this.updateFrame.bind(this);
-    this.spendCode = this.spendCode.bind(this);
-    this.addLines = this.addLines.bind(this);
     this.addCodeLines = this.addCodeLines.bind(this);
     this.addCaffine = this.addCaffine.bind(this);
     this.getProjects = this.getProjects.bind(this);
@@ -69,14 +76,7 @@ export class Game extends Component {
     if (this.state.splash) content = <Splash />;
     else content = <Stage1
       totalCodeLines={this.props.gameState.totalCodeLines}
-      unlockMap={this.props.gameState.unlockMap}
-      availableCodeLines={this.props.gameState.codeLines}
-      spendCode={this.spendCode}
-      addLines={this.addLines}
-      quitHandler={this.triggerEndGame}
-      caffine={this.state.caffine}
-      addCode={this.addCodeLines}
-      addCaffine={this.addCaffine}
+      buttons={this.getButtons()}
       projects={this.getProjects()}
     />;
 
@@ -146,22 +146,52 @@ export class Game extends Component {
     if (needsUpdate) this.setState(newState);
   }
 
-  spendCode(amount) {
-    this.props.reduceCodeLines(amount);
+  getButtons() {
+    let buttons = buttonList.filter(val => (
+      this.props.gameState.activeButtons[val.id] !== undefined && this.props.gameState.activeButtons[val.id] === true
+    ));
+    return buttons.map((val) => {
+      return Object.assign({}, val, {
+        reset: this.buttonReset(val, this.state.caffine),
+        onClick: this.clickedButton.bind(this, val),
+      });
+    });
   }
-  addLines(amount) {
-    this.props.addCodeLines(amount);
+
+  actionMap = {
+    [BUTTON_CODE]: this.addCodeLines.bind(this, 1),
+    [BUTTON_TEA]: this.addCaffine.bind(this, 1),
+    [BUTTON_COFFEE]: this.addCaffine.bind(this, 3),
+    [BUTTON_STACK]: this.addCodeLines.bind(this, 100),
+    [BUTTON_GITHUB]: this.addCodeLines.bind(this, 1000),
+    default: () => {
+      throw new Error("Fall off actionMap!")
+    }
+  }
+  resetMap = {
+    [BUTTON_CODE]: (caffine) => Math.max(0.5, 5 - caffine),
+    [BUTTON_TEA]: () => 20,
+    [BUTTON_COFFEE]: () => 50,
+    [BUTTON_STACK]: () => 100,
+    [BUTTON_GITHUB]: () => 500,
+    default: () => {
+      throw new Error("Fall off resetMap!")
+    }
+  }
+  clickedButton(button) {
+    (this.actionMap[button.id] ? this.actionMap[button.id] : this.actionMap['default'])();
+  }
+  buttonReset(button, caffine) {
+    return (this.resetMap[button.id] ? this.resetMap[button.id] : this.resetMap['default'])(caffine);
   }
 
   getProjects() {
-    let projects = ProjectManager(this.props);
-
-    console.log("Projects", projects);
-
+    let projects = getProjectsMap(this.props);
     return projects.map((val) => {
       return Object.assign({}, val, {
         onClick: this.clickedProject.bind(this, val),
         selected: val.id === this.state.projectSelected,
+        completeProject: val.completeProject,
       });
     })
   }
@@ -171,6 +201,7 @@ export class Game extends Component {
   }
   completeProject(project) {
     this.props.setProjectComplete(project.id);
+    triggerProjectComplete(project.id, this.props.dispatch);
   }
   selectProject(project) {
     this.setState({
@@ -192,11 +223,13 @@ function mapStateToProps(state) {
 }
 
 function mapDispatchToProps(dispatch, getState) {
-  return bindActionCreators({
+  const props = bindActionCreators({
     endGame,
     setProjectComplete,
     addProjectProgress,
   }, dispatch, getState);
+  props.dispatch = dispatch;
+  return props;
 }
 
 export default connect(mapStateToProps, mapDispatchToProps)(Game);

@@ -10,16 +10,7 @@ export default (props) => (
       quitHandler={props.quitHandler}
     />
     <Buttons
-      addLine = {() => {props.addCode(1);}}
-      drinkTea = {() => {props.addCaffine(1);}}
-      drinkCoffee = {() => {props.addCaffine(3);}}
-      researchOverflow = {() => {props.addCode(100);}}
-      researchGithub = {() => {props.addCode(1000);}}
-      writeCodeReset = {Math.max(0.5, 5 - props.caffine)}
-      teaReset = {20}
-      coffeeReset = {50}
-      overflowReset = {100}
-      githubReset = {500}
+      buttons={props.buttons}
     />
     <Projects
       projects={props.projects}
